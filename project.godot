@@ -13,13 +13,12 @@ config_version=5
 config/name="Godot 3D Multiplayer Template"
 config/description="This is a foundational template for a 3D multiplayer game, developed in Godot Engine."
 config/tags=PackedStringArray("3d", "network")
-run/main_scene="res://level/scenes/level.tscn"
+run/main_scene="res://C# Implementation/scenes/levelC.tscn"
 config/features=PackedStringArray("4.5", "C#", "Forward Plus")
 config/icon="res://icon.png"
 
 [autoload]
 
-NetworkC="*res://C# Implementation/Scripts/Network.cs"
 Network="*res://level/scripts/network.gd"
 
 [display]

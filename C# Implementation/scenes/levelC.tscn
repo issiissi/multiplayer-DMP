@@ -1,8 +1,8 @@
-[gd_scene load_steps=17 format=3 uid="uid://cjm3mtumgjmsf"]
+[gd_scene load_steps=17 format=3 uid="uid://dugaivbj1o66n"]
 
-[ext_resource type="Script" uid="uid://d0dgljwwl463n" path="res://level/scripts/level.gd" id="1_h5m65"]
-[ext_resource type="PackedScene" uid="uid://c5cwnkk0g7c1v" path="res://C# Implementation/scenes/playerC.tscn" id="2_jbc1g"]
-[ext_resource type="FontFile" uid="uid://diapabmalpcrj" path="res://assets/fonts/Kurland.ttf" id="2_k6vxf"]
+[ext_resource type="Script" uid="uid://cs0o14pjbcqn0" path="res://C# Implementation/MultiplayerManager.cs" id="1_btx3d"]
+[ext_resource type="PackedScene" uid="uid://c5cwnkk0g7c1v" path="res://C# Implementation/scenes/playerC.tscn" id="2_vjjne"]
+[ext_resource type="FontFile" uid="uid://diapabmalpcrj" path="res://assets/fonts/Kurland.ttf" id="3_pet2i"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_r5xs5"]
 size = Vector2(90, 90)
@@ -41,9 +41,10 @@ fog_enabled = true
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_npnbc"]
 color = Color(0, 0, 0, 0)
 
-[node name="Level" type="Node3D"]
-script = ExtResource("1_h5m65")
-player_scene = ExtResource("2_jbc1g")
+[node name="Level" type="Node3D" node_paths=PackedStringArray("menu")]
+script = ExtResource("1_btx3d")
+player = ExtResource("2_vjjne")
+menu = NodePath("Menu")
 
 [node name="Environment" type="Node3D" parent="."]
 
@@ -51,6 +52,7 @@ player_scene = ExtResource("2_jbc1g")
 collision_layer = 2
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Environment/Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0055036545, 0.021012306, -0.010074139)
 mesh = SubResource("PlaneMesh_r5xs5")
 surface_material_override/0 = SubResource("StandardMaterial3D_o02aj")
 
@@ -149,7 +151,7 @@ alignment = 1
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 0
-theme_override_fonts/font = ExtResource("2_k6vxf")
+theme_override_fonts/font = ExtResource("3_pet2i")
 theme_override_font_sizes/font_size = 70
 text = "Multiplayer Template"
 
@@ -175,13 +177,13 @@ alignment = 1
 [node name="Label" type="Label" parent="Menu/MainContainer/MainMenu/Option1"]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_fonts/font = ExtResource("2_k6vxf")
+theme_override_fonts/font = ExtResource("3_pet2i")
 theme_override_font_sizes/font_size = 35
 text = "Nickname : "
 
 [node name="NickInput" type="LineEdit" parent="Menu/MainContainer/MainMenu/Option1"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_k6vxf")
+theme_override_fonts/font = ExtResource("3_pet2i")
 theme_override_font_sizes/font_size = 35
 placeholder_text = "YourNick"
 max_length = 20
@@ -195,14 +197,14 @@ alignment = 1
 [node name="Label" type="Label" parent="Menu/MainContainer/MainMenu/Option2"]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_fonts/font = ExtResource("2_k6vxf")
+theme_override_fonts/font = ExtResource("3_pet2i")
 theme_override_font_sizes/font_size = 35
 text = "Player Skin : "
 
 [node name="SkinInput" type="LineEdit" parent="Menu/MainContainer/MainMenu/Option2"]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_fonts/font = ExtResource("2_k6vxf")
+theme_override_fonts/font = ExtResource("3_pet2i")
 theme_override_font_sizes/font_size = 35
 placeholder_text = "blue"
 alignment = 1
@@ -217,13 +219,13 @@ alignment = 1
 [node name="Label" type="Label" parent="Menu/MainContainer/MainMenu/Option3"]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_fonts/font = ExtResource("2_k6vxf")
+theme_override_fonts/font = ExtResource("3_pet2i")
 theme_override_font_sizes/font_size = 35
 text = "IP Address : "
 
 [node name="AddressInput" type="LineEdit" parent="Menu/MainContainer/MainMenu/Option3"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("2_k6vxf")
+theme_override_fonts/font = ExtResource("3_pet2i")
 theme_override_font_sizes/font_size = 35
 placeholder_text = "127.0.0.1"
 alignment = 1
@@ -243,7 +245,7 @@ alignment = 1
 layout_mode = 2
 theme_override_colors/font_pressed_color = Color(0, 0.52549, 0, 1)
 theme_override_colors/font_hover_color = Color(0, 0.52549, 0, 1)
-theme_override_fonts/font = ExtResource("2_k6vxf")
+theme_override_fonts/font = ExtResource("3_pet2i")
 theme_override_font_sizes/font_size = 35
 text = "HOST"
 flat = true
@@ -252,7 +254,7 @@ flat = true
 layout_mode = 2
 theme_override_colors/font_pressed_color = Color(0, 0.52549, 0, 1)
 theme_override_colors/font_hover_color = Color(0, 0.525257, 0, 1)
-theme_override_fonts/font = ExtResource("2_k6vxf")
+theme_override_fonts/font = ExtResource("3_pet2i")
 theme_override_font_sizes/font_size = 35
 text = "JOIN"
 flat = true
@@ -267,82 +269,13 @@ alignment = 1
 layout_mode = 2
 theme_override_colors/font_pressed_color = Color(0.858824, 0, 0, 0.862745)
 theme_override_colors/font_hover_color = Color(0.858807, 4.71681e-06, 1.15514e-06, 0.862745)
-theme_override_fonts/font = ExtResource("2_k6vxf")
+theme_override_fonts/font = ExtResource("3_pet2i")
 theme_override_font_sizes/font_size = 35
 text = "QUIT"
 flat = true
 
-[node name="MultiplayerChat" type="Control" parent="."]
-visible = false
-top_level = true
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = 16.0
-offset_right = -764.0
-offset_bottom = -254.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MultiplayerChat"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-alignment = 1
-
-[node name="Chat" type="TextEdit" parent="MultiplayerChat/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_fonts/font = ExtResource("2_k6vxf")
-text = "
-"
-
-[node name="HBoxContainer" type="HBoxContainer" parent="MultiplayerChat/VBoxContainer"]
-layout_mode = 2
-
-[node name="Message" type="LineEdit" parent="MultiplayerChat/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 4
-theme_override_fonts/font = ExtResource("2_k6vxf")
-
-[node name="Send" type="Button" parent="MultiplayerChat/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("2_k6vxf")
-text = "Send"
-
-[node name="ChatTitle" type="Label" parent="MultiplayerChat"]
-top_level = true
-layout_mode = 0
-anchor_right = 1.0
-offset_top = 16.0
-offset_right = -764.0
-offset_bottom = 34.0
-grow_horizontal = 2
-size_flags_horizontal = 4
-size_flags_vertical = 6
-theme_override_fonts/font = ExtResource("2_k6vxf")
-text = "Welcome to Global Chat!"
-horizontal_alignment = 1
-vertical_alignment = 1
-uppercase = true
-
 [node name="PlayersContainer" type="Node3D" parent="."]
 
-[node name="GameControls" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[connection signal="pressed" from="Menu/MainContainer/MainMenu/Buttons/Host" to="." method="_on_host_pressed"]
-[connection signal="pressed" from="Menu/MainContainer/MainMenu/Buttons/Join" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="Menu/MainContainer/MainMenu/Buttons/Host" to="." method="StartHost"]
+[connection signal="pressed" from="Menu/MainContainer/MainMenu/Buttons/Join" to="." method="StartClient"]
 [connection signal="pressed" from="Menu/MainContainer/MainMenu/Option4/Quit" to="." method="_on_quit_pressed"]
-[connection signal="pressed" from="MultiplayerChat/VBoxContainer/HBoxContainer/Send" to="." method="_on_send_pressed"]
