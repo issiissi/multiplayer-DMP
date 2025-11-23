@@ -1,8 +1,8 @@
 <Project Sdk="Godot.NET.Sdk/4.5.1">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <CodeAnalysisRuleSet>c:\Users\sebas\Documents\netwroking-test\.vscode\ruleset.xml</CodeAnalysisRuleSet>
     <TargetFramework Condition=" '$(GodotTargetPlatform)' == 'android' ">net9.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
-    <RootNamespace>Godot3DMultiplayerTemplate</RootNamespace>
   </PropertyGroup>
 </Project>
