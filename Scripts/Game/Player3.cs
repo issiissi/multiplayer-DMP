@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class Player : CharacterBody2D
+public partial class Player_3 : CharacterBody2D
 {
 	public const float Speed = 300.0f;
 	public const float JumpVelocity = -400.0f;
@@ -38,7 +38,7 @@ public partial class Player : CharacterBody2D
 
 			if (direction.X != 0)
 			{
-				anim_sprite.FlipH = direction.X > 0;
+				anim_sprite.FlipH = direction.X < 0;
 			}
 		}
 		else
@@ -57,7 +57,6 @@ public partial class Player : CharacterBody2D
 				anim_sprite.Play("idle");
         }
 
-		
 		Velocity = velocity;
 		MoveAndSlide();
 	}
