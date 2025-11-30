@@ -1,0 +1,148 @@
+[gd_scene load_steps=13 format=3 uid="uid://bkjbhtw2p3rw8"]
+
+[ext_resource type="Texture2D" uid="uid://bo5qv6s01x1ac" path="res://Sprites/Nature Platformer Tileset [16x16][FREE] - RottingPixels/nature-paltformer-tileset-16x16.png" id="1_ci6au"]
+[ext_resource type="PackedScene" uid="uid://wrn83sjadp03" path="res://Scenes/player.tscn" id="2_26yhd"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_26yhd"]
+texture = ExtResource("1_ci6au")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+4:1/0 = 0
+6:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
+4:2/0 = 0
+5:2/0 = 0
+6:2/0 = 0
+0:3/0 = 0
+1:3/0 = 0
+2:3/0 = 0
+3:3/0 = 0
+4:3/0 = 0
+5:3/0 = 0
+6:3/0 = 0
+0:4/0 = 0
+1:4/0 = 0
+2:4/0 = 0
+3:4/0 = 0
+4:4/0 = 0
+5:4/0 = 0
+6:4/0 = 0
+0:5/0 = 0
+1:5/0 = 0
+2:5/0 = 0
+3:5/0 = 0
+4:5/0 = 0
+5:5/0 = 0
+6:5/0 = 0
+0:6/0 = 0
+1:6/0 = 0
+2:6/0 = 0
+3:6/0 = 0
+4:6/0 = 0
+5:6/0 = 0
+6:6/0 = 0
+0:7/0 = 0
+1:7/0 = 0
+2:7/0 = 0
+3:7/0 = 0
+4:7/0 = 0
+5:7/0 = 0
+6:7/0 = 0
+0:8/0 = 0
+1:8/0 = 0
+2:8/0 = 0
+3:8/0 = 0
+4:8/0 = 0
+5:8/0 = 0
+6:8/0 = 0
+0:9/0 = 0
+1:9/0 = 0
+2:9/0 = 0
+3:9/0 = 0
+4:9/0 = 0
+2:10/0 = 0
+3:10/0 = 0
+4:10/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_p3ir5"]
+sources/0 = SubResource("TileSetAtlasSource_26yhd")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_myvm1"]
+size = Vector2(560, 15)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_q0mm3"]
+size = Vector2(560, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_np2xp"]
+size = Vector2(14, 178)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_w7jjh"]
+size = Vector2(14, 179)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6q3n4"]
+size = Vector2(489, 14)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4c2oa"]
+size = Vector2(462, 15)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_olcgw"]
+size = Vector2(430, 15)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dlo4w"]
+size = Vector2(398, 14)
+
+[node name="Map" type="Node2D"]
+
+[node name="TileMap" type="TileMap" parent="."]
+tile_set = SubResource("TileSet_p3ir5")
+format = 2
+layer_0/tile_data = PackedInt32Array(4, 0, 6, 5, 0, 6, 7, 0, 6, 6, 0, 6, 8, 0, 6, 10, 0, 6, 9, 0, 6, 11, 0, 6, 13, 0, 6, 12, 0, 6, 14, 0, 6, 17, 0, 6, 196609, 0, 6, 131074, 0, 6, 65539, 0, 6, 131075, 0, 6, 65540, 0, 6, 196610, 0, 6, 196608, 0, 3, 262144, 0, 4, 327680, 0, 5, 393216, 0, 6, 393217, 0, 6, 393218, 0, 6, 393219, 0, 6, 393220, 0, 6, 393221, 0, 6, 393222, 0, 6, 393223, 0, 6, 393224, 0, 6, 393225, 0, 6, 393226, 0, 6, 393227, 0, 6, 393228, 0, 6, 393229, 0, 6, 393230, 0, 6, 393231, 0, 6, 393232, 0, 6, 393233, 0, 6, 393234, 0, 6, 393235, 0, 6, 393236, 0, 6, 393237, 0, 6, 393238, 0, 6, 393239, 0, 6, 393240, 0, 6, 393241, 0, 6, 393242, 0, 6, 393243, 0, 6, 393244, 0, 6, 393245, 0, 6, 393246, 0, 6, 393247, 0, 6, 393248, 0, 6, 196640, 0, 3, 262176, 0, 4, 327712, 0, 5, 196639, 0, 6, 196638, 0, 6, 131102, 0, 6, 131101, 0, 6, 65564, 0, 6, 65565, 0, 6, 28, 0, 6, 27, 0, 6, 26, 0, 6, 25, 0, 6, 24, 0, 6, 23, 0, 6, 22, 0, 6, 21, 0, 6, 20, 0, 6, 19, 0, 6, 18, 0, 6, 16, 0, 6, 15, 0, 6, 196637, 0, 6, 196636, 0, 6, 196635, 0, 6, 196634, 0, 6, 196633, 0, 6, 196632, 0, 6, 196631, 0, 6, 196630, 0, 6, 196629, 0, 6, 196628, 0, 6, 196627, 0, 6, 196626, 0, 6, 196625, 0, 6, 196624, 0, 6, 196623, 0, 6, 196622, 0, 6, 196621, 0, 6, 196620, 0, 6, 131084, 327680, 5, 131083, 327680, 5, 131082, 327680, 5, 131081, 327680, 5, 131080, 327680, 5, 131079, 327680, 5, 131078, 327680, 5, 131077, 327680, 5, 196613, 0, 6, 196612, 0, 6, 196611, 0, 6, 196614, 0, 6, 196615, 0, 6, 196616, 0, 6, 196617, 0, 6, 196618, 0, 6, 196619, 0, 6, 131100, 327680, 5, 131099, 327680, 5, 131098, 327680, 5, 131097, 327680, 5, 131096, 327680, 5, 131095, 327680, 5, 131094, 327680, 5, 131093, 327680, 5, 131092, 327680, 5, 131091, 327680, 5, 131090, 327680, 5, 131089, 327680, 5, 131088, 327680, 5, 131087, 327680, 5, 131086, 327680, 5, 131085, 327680, 5, 131076, 327680, 5, 65541, 327680, 5, 65542, 327680, 5, 65543, 327680, 5, 65544, 327680, 5, 65545, 327680, 5, 65546, 327680, 5, 65547, 327680, 5, 65548, 327680, 5, 65549, 327680, 5, 65550, 327680, 5, 65551, 327680, 5, 65552, 327680, 5, 65553, 327680, 5, 65554, 327680, 5, 65555, 327680, 5, 65556, 327680, 5, 65557, 327680, 5, 65558, 327680, 5, 65559, 327680, 5, 65560, 327680, 5, 65561, 327680, 5, 65562, 327680, 5, 65563, 327680, 5, -196602, 131072, 3, -131066, 131072, 4, -65530, 131072, 5, -196592, 131072, 3, -131056, 131072, 4, -65520, 131072, 5, -196583, 131072, 3, -131047, 131072, 4, -65511, 131072, 5, 327707, 327680, 6, 327691, 327680, 6, 327697, 327680, 6, -65514, 327680, 6, -65526, 327680, 6, 327684, 327680, 6)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="Rand_1" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(264, 104.5)
+shape = SubResource("RectangleShape2D_myvm1")
+
+[node name="Rand_2" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(264, -90)
+shape = SubResource("RectangleShape2D_q0mm3")
+
+[node name="Rand_3" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(-9, 8)
+shape = SubResource("RectangleShape2D_np2xp")
+
+[node name="Rand_4" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(537, 7.5)
+shape = SubResource("RectangleShape2D_w7jjh")
+
+[node name="Bodenebene_1" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(264.5, 56)
+shape = SubResource("RectangleShape2D_6q3n4")
+
+[node name="Bodenebene_2" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(264, 40.5)
+shape = SubResource("RectangleShape2D_4c2oa")
+
+[node name="Bodenebene_3" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(264, 24.5)
+shape = SubResource("RectangleShape2D_olcgw")
+
+[node name="Bodenebene_4" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(264, 9)
+shape = SubResource("RectangleShape2D_dlo4w")
+
+[node name="Player" parent="." instance=ExtResource("2_26yhd")]
+position = Vector2(69, -9)
