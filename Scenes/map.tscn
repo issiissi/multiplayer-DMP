@@ -1,7 +1,8 @@
-[gd_scene load_steps=13 format=3 uid="uid://bkjbhtw2p3rw8"]
+[gd_scene load_steps=14 format=3 uid="uid://bkjbhtw2p3rw8"]
 
-[ext_resource type="Texture2D" uid="uid://bo5qv6s01x1ac" path="res://Sprites/Nature Platformer Tileset [16x16][FREE] - RottingPixels/nature-paltformer-tileset-16x16.png" id="1_ci6au"]
-[ext_resource type="PackedScene" uid="uid://dnruo8qvmrs8" path="res://Scenes/player_3.tscn" id="2_26yhd"]
+[ext_resource type="Texture2D" uid="uid://bo5qv6s01x1ac" path="res://Assets/Sprites/Nature Platformer Tileset [16x16][FREE] - RottingPixels/nature-paltformer-tileset-16x16.png" id="1_ci6au"]
+[ext_resource type="PackedScene" uid="uid://wrn83sjadp03" path="res://Scenes/Scenes_Player/player.tscn" id="2_26yhd"]
+[ext_resource type="Texture2D" uid="uid://p76jrj5ifkrh" path="res://Assets/Backgrounds/kona-cyan1.jpg" id="3_p3ir5"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_26yhd"]
 texture = ExtResource("1_ci6au")
@@ -145,5 +146,12 @@ shape = SubResource("RectangleShape2D_olcgw")
 position = Vector2(264, 9)
 shape = SubResource("RectangleShape2D_dlo4w")
 
-[node name="Player3" parent="." instance=ExtResource("2_26yhd")]
-position = Vector2(82, -10)
+[node name="Sprite2D" type="Sprite2D" parent="."]
+visible = false
+show_behind_parent = true
+position = Vector2(271, -37.00003)
+scale = Vector2(6.349445, 4.0772223)
+texture = ExtResource("3_p3ir5")
+
+[node name="Player" parent="." instance=ExtResource("2_26yhd")]
+position = Vector2(215, -13)
