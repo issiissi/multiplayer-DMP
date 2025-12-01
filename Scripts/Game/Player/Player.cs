@@ -8,11 +8,16 @@ public partial class Player : CharacterBody2D
 
 	private AnimatedSprite2D anim_sprite;
 	private Label nameLabel;
+
+//set playername on spawn
+	public string PlayerName = "Unbenannt";
 	public override void _Ready()
 	{
 		anim_sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
 		nameLabel = GetNode<Label>("Label");
-		nameLabel.Text = "Player";
+		//set playername in label on ready
+		 nameLabel.Text = PlayerName;
+		//nameLabel.Text = "Player";
 	}
 
 	public override void _PhysicsProcess(double delta)
