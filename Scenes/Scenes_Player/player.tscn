@@ -211,13 +211,12 @@ shape = SubResource("RectangleShape2D_gymyn")
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(2, 2)
 
-[node name="Label" type="Label" parent="."]
+[node name="Name_InGame" type="Label" parent="."]
 offset_left = -23.0
 offset_top = -35.0
 offset_right = 25.0
 offset_bottom = -27.0
 theme_override_fonts/font = ExtResource("3_6t5aa")
 theme_override_font_sizes/font_size = 8
-text = "Player"
 horizontal_alignment = 1
 vertical_alignment = 1

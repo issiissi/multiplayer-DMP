@@ -163,13 +163,12 @@ zoom = Vector2(2, 2)
 position = Vector2(-0.5, -12.5)
 shape = SubResource("RectangleShape2D_n0kdt")
 
-[node name="Label" type="Label" parent="."]
+[node name="Name_InGame" type="Label" parent="."]
 offset_left = -23.0
 offset_top = -33.0
 offset_right = 25.0
 offset_bottom = -25.0
 theme_override_fonts/font = ExtResource("5_3vk8h")
 theme_override_font_sizes/font_size = 8
-text = "Player"
 horizontal_alignment = 1
 vertical_alignment = 1

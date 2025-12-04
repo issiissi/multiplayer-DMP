@@ -92,13 +92,12 @@ shape = SubResource("RectangleShape2D_cwvn5")
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(2, 2)
 
-[node name="Label" type="Label" parent="."]
+[node name="Name_InGame" type="Label" parent="."]
 offset_left = -20.0
 offset_top = -28.0
 offset_right = 28.0
 offset_bottom = -20.0
 theme_override_fonts/font = ExtResource("6_expaw")
 theme_override_font_sizes/font_size = 8
-text = "Player"
 horizontal_alignment = 1
 vertical_alignment = 1

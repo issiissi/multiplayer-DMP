@@ -11,7 +11,7 @@ public partial class Player2 : CharacterBody2D
 	public override void _Ready()
 	{
 		anim_sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
-		nameLabel = GetNode<Label>("Label");
+		nameLabel = GetNode<Label>("Name_InGame");
 		nameLabel.Text = "Player";
 	}
 
