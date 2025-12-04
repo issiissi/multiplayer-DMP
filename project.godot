@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="NetwrokingTest"
-run/main_scene="uid://biht5sh07rmfo"
+run/main_scene="uid://djssow5i68l4v"
 config/features=PackedStringArray("4.5", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 

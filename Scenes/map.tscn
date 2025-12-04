@@ -155,3 +155,16 @@ texture = ExtResource("3_p3ir5")
 
 [node name="Player" parent="." instance=ExtResource("2_26yhd")]
 position = Vector2(215, -13)
+
+[node name="NetworkGameManager" type="Node" parent="."]
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="SpawnPoint_1" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(104, 88)
+
+[node name="SpawnPoint_2" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(94, -28)
+
+[node name="SpawnPoint_3" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(455, -22)
