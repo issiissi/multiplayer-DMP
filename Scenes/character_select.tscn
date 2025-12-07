@@ -13,8 +13,11 @@ script = ExtResource("1_uelh3")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 119.0
+offset_top = 21.0
+offset_right = 379.0
+offset_bottom = 118.0
+scale = Vector2(3.347801, 3.551871)
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2
@@ -137,10 +140,10 @@ text = "Ready"
 
 [node name="StartButton" type="Button" parent="."]
 layout_mode = 0
-offset_left = 362.99994
-offset_top = 459.0
-offset_right = 490.99997
-offset_bottom = 493.0
+offset_left = 349.0
+offset_top = 495.99997
+offset_right = 477.00003
+offset_bottom = 530.0
 scale = Vector2(3.597889, 3.9888341)
 text = "Start"
 

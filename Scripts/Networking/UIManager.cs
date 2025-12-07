@@ -176,9 +176,15 @@ public partial class UIManager : Node
 
     public void StartGame()
     {
-        //Send over Network that game started
-        Lobby.Instance.Rpc(Lobby.MethodName.ServerStartGame); // Tell the all clients that the game starts now.
-
+        if (Multiplayer.IsServer())
+        {
+            Lobby.Instance.Rpc(Lobby.MethodName.GoToCharacterSelect);
+            GD.Print("HOST: StartGame pressed → switching to CharacterSelect");
+        }
+        else
+        {
+            GD.Print("CLIENT pressed StartGame → ignored");
+        }
         startButton.Hide();
     }
 

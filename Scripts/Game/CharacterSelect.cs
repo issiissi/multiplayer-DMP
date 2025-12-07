@@ -129,6 +129,7 @@ public partial class CharacterSelect : Control
 		GameData.Player3Character = p3Index;
 		GameData.Player4Character = p4Index;
 
-        GetTree().ChangeSceneToFile("res://Scenes/map.tscn");
+		if(Multiplayer.IsServer())
+        	Lobby.Instance.Rpc(Lobby.MethodName.GoToGameScene);
     }
 }
