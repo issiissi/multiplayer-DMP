@@ -77,12 +77,71 @@ text = ">"
 layout_mode = 2
 text = "Ready"
 
+[node name="Player3" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Name" type="Label" parent="MarginContainer/HBoxContainer/Player3"]
+texture_filter = 1
+layout_mode = 2
+text = "Player 3"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CharacterPreview" type="TextureRect" parent="MarginContainer/HBoxContainer/Player3"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/Player3"]
+layout_mode = 2
+alignment = 1
+
+[node name="Links_Player3" type="Button" parent="MarginContainer/HBoxContainer/Player3/HBoxContainer"]
+layout_mode = 2
+text = "<"
+
+[node name="Rechts_Player3" type="Button" parent="MarginContainer/HBoxContainer/Player3/HBoxContainer"]
+layout_mode = 2
+text = ">"
+
+[node name="Ready_Player3" type="Button" parent="MarginContainer/HBoxContainer/Player3"]
+layout_mode = 2
+text = "Ready"
+
+[node name="Player4" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Name" type="Label" parent="MarginContainer/HBoxContainer/Player4"]
+texture_filter = 1
+layout_mode = 2
+text = "Player 4"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CharacterPreview" type="TextureRect" parent="MarginContainer/HBoxContainer/Player4"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/Player4"]
+layout_mode = 2
+alignment = 1
+
+[node name="Links_Player4" type="Button" parent="MarginContainer/HBoxContainer/Player4/HBoxContainer"]
+layout_mode = 2
+text = "<"
+
+[node name="Rechts_Player4" type="Button" parent="MarginContainer/HBoxContainer/Player4/HBoxContainer"]
+layout_mode = 2
+text = ">"
+
+[node name="Ready_Player4" type="Button" parent="MarginContainer/HBoxContainer/Player4"]
+layout_mode = 2
+text = "Ready"
+
 [node name="StartButton" type="Button" parent="."]
 layout_mode = 0
-offset_left = 5.0
-offset_top = 195.0
-offset_right = 133.0
-offset_bottom = 229.0
+offset_left = 362.99994
+offset_top = 459.0
+offset_right = 490.99997
+offset_bottom = 493.0
+scale = Vector2(3.597889, 3.9888341)
 text = "Start"
 
 [connection signal="button_down" from="MarginContainer/HBoxContainer/Player1/HBoxContainer/Links_Player1" to="." method="_on_links_player_1_button_down"]
@@ -91,4 +150,10 @@ text = "Start"
 [connection signal="button_down" from="MarginContainer/HBoxContainer/Player2/HBoxContainer/Links_Player2" to="." method="_on_links_player_2_button_down"]
 [connection signal="button_down" from="MarginContainer/HBoxContainer/Player2/HBoxContainer/Rechts_Player2" to="." method="_on_rechts_player_2_button_down"]
 [connection signal="button_down" from="MarginContainer/HBoxContainer/Player2/Ready_Player2" to="." method="_on_ready_player_2_button_down"]
+[connection signal="button_down" from="MarginContainer/HBoxContainer/Player3/HBoxContainer/Links_Player3" to="." method="_on_links_player_3_button_down"]
+[connection signal="button_down" from="MarginContainer/HBoxContainer/Player3/HBoxContainer/Rechts_Player3" to="." method="_on_rechts_player_3_button_down"]
+[connection signal="button_down" from="MarginContainer/HBoxContainer/Player3/Ready_Player3" to="." method="_on_ready_player_3_button_down"]
+[connection signal="button_down" from="MarginContainer/HBoxContainer/Player4/HBoxContainer/Links_Player4" to="." method="_on_links_player_4_button_down"]
+[connection signal="button_down" from="MarginContainer/HBoxContainer/Player4/HBoxContainer/Rechts_Player4" to="." method="_on_rechts_player_4_button_down"]
+[connection signal="button_down" from="MarginContainer/HBoxContainer/Player4/Ready_Player4" to="." method="_on_ready_player_4_button_down"]
 [connection signal="button_down" from="StartButton" to="." method="_on_start_button_down"]

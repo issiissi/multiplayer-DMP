@@ -1,7 +1,7 @@
 [gd_scene load_steps=14 format=3 uid="uid://bkjbhtw2p3rw8"]
 
 [ext_resource type="Texture2D" uid="uid://bo5qv6s01x1ac" path="res://Assets/Sprites/Nature Platformer Tileset [16x16][FREE] - RottingPixels/nature-paltformer-tileset-16x16.png" id="1_ci6au"]
-[ext_resource type="PackedScene" uid="uid://wrn83sjadp03" path="res://Scenes/Scenes_Player/player.tscn" id="2_26yhd"]
+[ext_resource type="Script" uid="uid://dn3x5y4k0emgt" path="res://Scripts/Game/PlayerSpawner.cs" id="3_myvm1"]
 [ext_resource type="Texture2D" uid="uid://p76jrj5ifkrh" path="res://Assets/Backgrounds/kona-cyan1.jpg" id="3_p3ir5"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_26yhd"]
@@ -153,10 +153,8 @@ position = Vector2(271, -37.00003)
 scale = Vector2(6.349445, 4.0772223)
 texture = ExtResource("3_p3ir5")
 
-[node name="Player" parent="." instance=ExtResource("2_26yhd")]
-position = Vector2(215, -13)
-
-[node name="NetworkGameManager" type="Node" parent="."]
+[node name="PlayerSpawner" type="Node" parent="."]
+script = ExtResource("3_myvm1")
 
 [node name="SpawnPoints" type="Node2D" parent="."]
 

@@ -12,16 +12,21 @@ public partial class Player : CharacterBody2D
 	{
 		anim_sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
 		nameLabel = GetNode<Label>("Name_InGame");
-		nameLabel.Text = "Player";
 
 		if (!IsMultiplayerAuthority())
         {
             SetProcessInput(false);
         }
+		nameLabel.Text = Multiplayer.GetUniqueId().ToString();
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
+		if (!IsMultiplayerAuthority())
+		{
+			return;
+		}
+
 		Vector2 velocity = Velocity;
 
 		// Add the gravity.
@@ -43,11 +48,8 @@ public partial class Player : CharacterBody2D
 		if (direction != Vector2.Zero)
 		{
 			velocity.X = direction.X * Speed;
-
-			if (direction.X != 0)
-			{
-				anim_sprite.FlipH = direction.X > 0;
-			}
+			anim_sprite.FlipH = direction.X < 0;
+			
 		}
 		else
 		{

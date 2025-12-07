@@ -1,6 +1,6 @@
 [gd_scene load_steps=30 format=3 uid="uid://wrn83sjadp03"]
 
-[ext_resource type="Script" uid="uid://c1nt7guo7k40v" path="res://Scripts/Game/Player/Player.cs" id="1_cvnsp"]
+[ext_resource type="Script" uid="uid://c1nt7guo7k40v" path="res://Scripts/Game/Player.cs" id="1_cvnsp"]
 [ext_resource type="Texture2D" uid="uid://b52tg368snrrf" path="res://Assets/Sprites/Spritesheets/Main Character - Male - Full spritesheet - No Guide.png" id="2_6t5aa"]
 [ext_resource type="FontFile" uid="uid://pjakdabc2s7q" path="res://Assets/Fonts/PressStart2P-Regular.ttf" id="3_6t5aa"]
 
@@ -202,7 +202,6 @@ position = Vector2(-1, -24)
 scale = Vector2(1.5, 1.5)
 sprite_frames = SubResource("SpriteFrames_tx1dd")
 animation = &"idle"
-flip_h = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0.5, -13)
