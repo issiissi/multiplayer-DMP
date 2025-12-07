@@ -74,7 +74,7 @@ public partial class CharacterSelect : Control
         startButton.Disabled = !(p1Ready && p2Ready);
     }
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public void _on_start()
+	public void _on_start_button_down()
     {
         GetTree().ChangeSceneToFile("res://Scenes/map.tscn");
     }
