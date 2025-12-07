@@ -20,6 +20,11 @@ public partial class CharacterSelect : Control
 	private TextureRect p2Preview;
 	private TextureRect p3Preview;
 	private TextureRect p4Preview;
+
+	private Label p1Name;
+	private Label p2Name;
+	private Label p3Name;
+	private Label p4Name;
 	private Button startButton;
 	public override void _Ready()
     {
@@ -33,28 +38,48 @@ public partial class CharacterSelect : Control
 		p4Preview = GetNode<TextureRect>("MarginContainer/HBoxContainer/Player4/CharacterPreview");
 		startButton = GetNode<Button>("StartButton");
 
-		UpdatePreviews();
+		p1Name = GetNode<Label>("MarginContainer/HBoxContainer/Player1/Name");
+		p2Name = GetNode<Label>("MarginContainer/HBoxContainer/Player2/Name");
+		p3Name = GetNode<Label>("MarginContainer/HBoxContainer/Player3/Name");
+		p4Name = GetNode<Label>("MarginContainer/HBoxContainer/Player4/Name");
+
+		Load_Names();
+		Update_Previews();
     }
-	private void UpdatePreviews()
+	private void Update_Previews()
     {
         p1Preview.Texture = characters[p1Index];
 		p2Preview.Texture = characters[p2Index];
 		p3Preview.Texture = characters[p3Index];
 		p4Preview.Texture = characters[p4Index];
     }
+	private void Load_Names()
+    {
+        var players = Lobby.Instance._players;
+		foreach (var entry in players)
+        {
+            long id = entry.Key;
+			string name = entry.Value["Name"];
+
+			if (id == 1) p1Name.Text = name;
+			if (id == 2) p2Name.Text = name;
+			if (id == 3) p3Name.Text = name;
+			if (id == 4) p4Name.Text = name;
+        }
+    }
 	private void _on_links_player_1_button_down()
     {
         if (p1Ready) 
 			return;
 		p1Index = (p1Index - 1 + characters.Count) % characters.Count;
-		UpdatePreviews();
+		Update_Previews();
     }
 	private void _on_rechts_player_1_button_down()
     {
        if (p1Ready) 
 			return;
 		p1Index = (p1Index + 1) % characters.Count;
-		UpdatePreviews();
+		Update_Previews();
     }
 	private void _on_ready_player_1_button_down()
     {
@@ -66,14 +91,14 @@ public partial class CharacterSelect : Control
         if (p2Ready) 
 			return;
 		p2Index = (p2Index - 1 + characters.Count) % characters.Count;
-		UpdatePreviews();
+		Update_Previews();
     }
 	private void _on_rechts_player_2_button_down()
     {
        if (p2Ready) 
 			return;
 		p2Index = (p2Index + 1) % characters.Count;
-		UpdatePreviews();
+		Update_Previews();
     }
 	private void _on_ready_player_2_button_down()
     {
@@ -85,14 +110,14 @@ public partial class CharacterSelect : Control
         if (p3Ready) 
 			return;
 		p3Index = (p3Index - 1 + characters.Count) % characters.Count;
-		UpdatePreviews();
+		Update_Previews();
     }
 	private void _on_rechts_player_3_button_down()
     {
        if (p3Ready) 
 			return;
 		p3Index = (p3Index + 1) % characters.Count;
-		UpdatePreviews();
+		Update_Previews();
     }
 	private void _on_ready_player_3_button_down()
     {
@@ -104,14 +129,14 @@ public partial class CharacterSelect : Control
         if (p4Ready) 
 			return;
 		p4Index = (p4Index - 1 + characters.Count) % characters.Count;
-		UpdatePreviews();
+		Update_Previews();
     }
 	private void _on_rechts_player_4_button_down()
     {
        if (p4Ready) 
 			return;
 		p4Index = (p4Index + 1) % characters.Count;
-		UpdatePreviews();
+		Update_Previews();
     }
 	private void _on_ready_player_4_button_down()
     {

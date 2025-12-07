@@ -13,19 +13,18 @@ public partial class Player : CharacterBody2D
 		anim_sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
 		nameLabel = GetNode<Label>("Name_InGame");
 
+		long id = GetMultiplayerAuthority();
+		string name = Lobby.Instance._players[id]["Name"];
+		nameLabel.Text = name;
+
 		if (!IsMultiplayerAuthority())
-        {
             SetProcessInput(false);
-        }
-		nameLabel.Text = Multiplayer.GetUniqueId().ToString();
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
 		if (!IsMultiplayerAuthority())
-		{
 			return;
-		}
 
 		Vector2 velocity = Velocity;
 
