@@ -396,4 +396,17 @@ Sends own id + id it request the ready state from
         }
     }
 
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    public void GoToCharacterSelect()
+    {
+        GD.Print("RPC: Switching to CharacterSelect");
+        GetTree().ChangeSceneToFile("res://Scenes/character_select.tscn");
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    public void GoToGameScene()
+    {
+        GD.Print("RPC: Switching to GameScene");
+        GetTree().ChangeSceneToFile("res://Scenes/map.tscn");
+    }
 }

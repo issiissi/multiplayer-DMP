@@ -1,13 +1,16 @@
 using Godot;
 using System;
 
-public partial class Player2 : CharacterBody2D
+public partial class Player : CharacterBody2D
 {
 	public const float Speed = 300.0f;
 	public const float JumpVelocity = -400.0f;
 
 	private AnimatedSprite2D anim_sprite;
 	private Label nameLabel;
+
+//set playername on spawn
+	public string PlayerName = "Unbenannt";
 	public override void _Ready()
 	{
 		anim_sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
@@ -17,6 +20,9 @@ public partial class Player2 : CharacterBody2D
 
 	public override void _PhysicsProcess(double delta)
 	{
+		if (!IsMultiplayerAuthority())
+			return;
+
 		Vector2 velocity = Velocity;
 
 		// Add the gravity.
@@ -38,11 +44,8 @@ public partial class Player2 : CharacterBody2D
 		if (direction != Vector2.Zero)
 		{
 			velocity.X = direction.X * Speed;
-
-			if (direction.X != 0)
-			{
-				anim_sprite.FlipH = direction.X < 0;
-			}
+			anim_sprite.FlipH = direction.X < 0;
+			
 		}
 		else
 		{
@@ -60,6 +63,7 @@ public partial class Player2 : CharacterBody2D
 				anim_sprite.Play("idle");
         }
 
+		
 		Velocity = velocity;
 		MoveAndSlide();
 	}

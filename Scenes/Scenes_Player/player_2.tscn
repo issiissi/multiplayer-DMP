@@ -1,6 +1,6 @@
 [gd_scene load_steps=25 format=3 uid="uid://dr1pl4aovgwf1"]
 
-[ext_resource type="Script" uid="uid://embdry35k2e6" path="res://Scripts/Game/Player/Player2.cs" id="1_tepif"]
+[ext_resource type="Script" uid="uid://c1nt7guo7k40v" path="res://Scripts/Game/Player.cs" id="1_tepif"]
 [ext_resource type="Texture2D" uid="uid://ciphpu317neet" path="res://Assets/Sprites/Knight_player/Idle_KG_1.png" id="2_kdsr1"]
 [ext_resource type="Texture2D" uid="uid://dhenfkfdxndkv" path="res://Assets/Sprites/Knight_player/Jump_KG_1.png" id="3_wetoc"]
 [ext_resource type="Texture2D" uid="uid://0buk5ehmwncf" path="res://Assets/Sprites/Knight_player/Walking_KG_1.png" id="4_27njv"]
@@ -163,13 +163,12 @@ zoom = Vector2(2, 2)
 position = Vector2(-0.5, -12.5)
 shape = SubResource("RectangleShape2D_n0kdt")
 
-[node name="Label" type="Label" parent="."]
+[node name="Name_InGame" type="Label" parent="."]
 offset_left = -23.0
 offset_top = -33.0
 offset_right = 25.0
 offset_bottom = -25.0
 theme_override_fonts/font = ExtResource("5_3vk8h")
 theme_override_font_sizes/font_size = 8
-text = "Player"
 horizontal_alignment = 1
 vertical_alignment = 1

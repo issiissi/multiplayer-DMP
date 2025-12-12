@@ -1,11 +1,11 @@
-[gd_scene load_steps=4 format=3 uid="uid://biht5sh07rmfo"]
+[gd_scene load_steps=3 format=3 uid="uid://biht5sh07rmfo"]
 
-[ext_resource type="Script" uid="uid://cddws37phn0xh" path="res://Scripts/Networking/Lobby.cs" id="1_ko2s7"]
-[ext_resource type="Script" uid="uid://sneckqfb3bf1" path="res://Scripts/Networking/UIManager.cs" id="2_gxb1y"]
-[ext_resource type="PackedScene" uid="uid://ch1vpft72bge5" path="res://Scenes/label_check_box_pair.tscn" id="3_0dy5s"]
+[ext_resource type="Script" uid="uid://sneckqfb3bf1" path="res://Scripts/Networking/UIManager.cs" id="1_m82sy"]
+[ext_resource type="PackedScene" uid="uid://ch1vpft72bge5" path="res://Scenes/label_check_box_pair.tscn" id="2_tuf85"]
 
-[node name="Lobby" type="Node3D"]
-script = ExtResource("1_ko2s7")
+[node name="Lobby" type="Control"]
+layout_mode = 3
+anchors_preset = 0
 
 [node name="Lobby Menu" type="CanvasLayer" parent="."]
 
@@ -130,14 +130,14 @@ text = "BACK
 "
 
 [node name="UI Manager" type="Node" parent="." node_paths=PackedStringArray("lobbyMenu", "hostMenu", "startMenu", "joinMenu", "startButton", "playerInfoContainer")]
-script = ExtResource("2_gxb1y")
+script = ExtResource("1_m82sy")
 lobbyMenu = NodePath("../Lobby Menu")
 hostMenu = NodePath("../Lobby Menu/Host Menu")
 startMenu = NodePath("../Start Menu")
 joinMenu = NodePath("../Join Menu")
 startButton = NodePath("../Lobby Menu/Host Menu/StartGame")
 playerInfoContainer = NodePath("../Lobby Menu/Player Info Container")
-playerInfoTemplate = ExtResource("3_0dy5s")
+playerInfoTemplate = ExtResource("2_tuf85")
 
 [connection signal="pressed" from="Lobby Menu/Host Menu/StartGame" to="UI Manager" method="StartGame"]
 [connection signal="pressed" from="Lobby Menu/Leave" to="UI Manager" method="ResetToStart"]
