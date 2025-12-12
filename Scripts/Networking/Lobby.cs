@@ -404,8 +404,6 @@ Sends own id + id it request the ready state from
         }
     }
 
-<<<<<<< Updated upstream
-=======
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     public void GoToCharacterSelect()
     {
@@ -444,5 +442,4 @@ Sends own id + id it request the ready state from
     }
 
 
->>>>>>> Stashed changes
 }
