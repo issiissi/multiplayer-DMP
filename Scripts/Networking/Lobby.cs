@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Godot;
@@ -41,7 +42,7 @@ public partial class Lobby : Node
 
     public Dictionary<string, string> _playerInfo = new Dictionary<string, string>()
     {
-        { "Name", "PlayerName" },
+        { "Name", "PlayerName" },{"Character", "Character0"}
     };
 
 
@@ -66,6 +67,13 @@ public partial class Lobby : Node
     public delegate void SendClientStateEventHandler(int playerID, bool ready);
     [Signal]
     public delegate void ClientRequestStateEventHandler(int playerID, int targetPlayerID);
+    [Signal]
+    public delegate void ClientChangedCharacterEventHandler(int playerID, string character);
+    [Signal]
+    public delegate void ServerStartedTimerEventHandler();
+    [Signal]
+    public delegate void ClientFinishedFirstEventHandler(int playerID, float time);
+
 
     public override void _EnterTree()
     {
@@ -177,7 +185,7 @@ public partial class Lobby : Node
         EmitSignal(SignalName.PlayerConnected, newPlayerId, newPlayerInfo);
 
         //Debug Message
-        GD.Print("Client: " + Multiplayer.GetUniqueId() + "\t RegisterPlayer: " + newPlayerId);
+        GD.Print("Client: " + Multiplayer.GetUniqueId() + "\t RegisterPlayer: " + _players[newPlayerId]["Character"]);
     }
 
     /*
@@ -396,4 +404,45 @@ Sends own id + id it request the ready state from
         }
     }
 
+<<<<<<< Updated upstream
+=======
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    public void GoToCharacterSelect()
+    {
+        GD.Print("RPC: Switching to CharacterSelect");
+        GetTree().ChangeSceneToFile("res://Scenes/character_select.tscn");
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    public void GoToGameScene()
+    {
+        GD.Print("RPC: Switching to GameScene");
+        GetTree().ChangeSceneToFile("res://Scenes/map.tscn");
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void ClientChangedCharacter(Dictionary<string, string> playerInfo)
+    {
+        int playerId = Multiplayer.GetRemoteSenderId();
+        string selectedCharacter = playerInfo["Character"];
+
+        EmitSignal(SignalName.ClientChangedCharacter, playerId, selectedCharacter);
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void ServerStartTimer()
+    {
+        EmitSignal(SignalName.ServerStartedTimer);
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void ClientFinishedFirst()
+    {
+        int playerId = Multiplayer.GetRemoteSenderId();
+
+        EmitSignal(SignalName.ClientFinishedFirst, playerId, Timer.GetCurrentTime()); 
+    }
+
+
+>>>>>>> Stashed changes
 }
