@@ -1,0 +1,147 @@
+[gd_scene load_steps=3 format=3 uid="uid://chwgqjmmhlj3x"]
+
+[ext_resource type="Script" uid="uid://sneckqfb3bf1" path="res://Scripts/Networking/UIManager.cs" id="1_m82sy"]
+[ext_resource type="PackedScene" uid="uid://ch1vpft72bge5" path="res://Scenes/label_check_box_pair.tscn" id="2_tuf85"]
+
+[node name="Lobby" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="Lobby Menu" type="CanvasLayer" parent="."]
+
+[node name="Host Menu" type="CanvasLayer" parent="Lobby Menu"]
+
+[node name="IP Field" type="LineEdit" parent="Lobby Menu/Host Menu"]
+offset_left = 342.0
+offset_top = 48.0
+offset_right = 815.0
+offset_bottom = 79.0
+placeholder_text = "IP"
+editable = false
+
+[node name="Port Field" type="LineEdit" parent="Lobby Menu/Host Menu"]
+offset_left = 342.0
+offset_top = 79.0
+offset_right = 815.0
+offset_bottom = 110.0
+placeholder_text = "Port"
+editable = false
+
+[node name="StartGame" type="Button" parent="Lobby Menu/Host Menu"]
+offset_left = 817.0
+offset_top = 483.0
+offset_right = 1142.0
+offset_bottom = 559.0
+text = "Start Game"
+
+[node name="Leave" type="Button" parent="Lobby Menu"]
+offset_left = 817.0
+offset_top = 559.0
+offset_right = 1142.0
+offset_bottom = 635.0
+text = "LEAVE"
+
+[node name="Player Info Container" type="VBoxContainer" parent="Lobby Menu"]
+offset_right = 385.0
+offset_bottom = 40.0
+
+[node name="Start Menu" type="CanvasLayer" parent="."]
+visible = false
+
+[node name="Name Input" type="LineEdit" parent="Start Menu"]
+offset_left = 342.0
+offset_top = 110.0
+offset_right = 815.0
+offset_bottom = 141.0
+placeholder_text = "Name"
+
+[node name="Host Game" type="Button" parent="Start Menu"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -162.0
+offset_top = -159.0
+offset_right = 163.0
+offset_bottom = -83.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "HOST
+"
+
+[node name="Join Game" type="Button" parent="Start Menu"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -162.0
+offset_top = -83.0
+offset_right = 163.0
+offset_bottom = -7.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "JOIN"
+
+[node name="Join Menu" type="CanvasLayer" parent="."]
+
+[node name="IP Input" type="LineEdit" parent="Join Menu"]
+offset_left = 342.0
+offset_top = 141.0
+offset_right = 815.0
+offset_bottom = 172.0
+placeholder_text = "IP"
+
+[node name="Port Input" type="LineEdit" parent="Join Menu"]
+offset_left = 342.0
+offset_top = 172.0
+offset_right = 815.0
+offset_bottom = 203.0
+placeholder_text = "Port"
+
+[node name="Join Lobby" type="Button" parent="Join Menu"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -162.0
+offset_top = -83.0
+offset_right = 163.0
+offset_bottom = -7.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "JOIN"
+
+[node name="Back" type="Button" parent="Join Menu"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -162.0
+offset_top = -7.0
+offset_right = 163.0
+offset_bottom = 69.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "BACK
+"
+
+[node name="UI Manager" type="Node" parent="." node_paths=PackedStringArray("lobbyMenu", "hostMenu", "startMenu", "joinMenu", "startButton", "playerInfoContainer")]
+script = ExtResource("1_m82sy")
+lobbyMenu = NodePath("../Lobby Menu")
+hostMenu = NodePath("../Lobby Menu/Host Menu")
+startMenu = NodePath("../Start Menu")
+joinMenu = NodePath("../Join Menu")
+startButton = NodePath("../Lobby Menu/Host Menu/StartGame")
+playerInfoContainer = NodePath("../Lobby Menu/Player Info Container")
+playerInfoTemplate = ExtResource("2_tuf85")
+
+[connection signal="pressed" from="Lobby Menu/Host Menu/StartGame" to="UI Manager" method="StartGame"]
+[connection signal="pressed" from="Lobby Menu/Leave" to="UI Manager" method="ResetToStart"]
+[connection signal="pressed" from="Start Menu/Host Game" to="UI Manager" method="StartHostingServer"]
+[connection signal="pressed" from="Start Menu/Join Game" to="UI Manager" method="StartJoiningServer"]
+[connection signal="pressed" from="Join Menu/Join Lobby" to="UI Manager" method="JoinServer"]
+[connection signal="pressed" from="Join Menu/Back" to="UI Manager" method="ResetToStart"]
