@@ -1,6 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://biht5sh07rmfo"]
+[gd_scene load_steps=5 format=3 uid="uid://biht5sh07rmfo"]
 
 [ext_resource type="Script" uid="uid://sneckqfb3bf1" path="res://Scripts/Networking/UIManager.cs" id="1_m82sy"]
+[ext_resource type="Script" uid="uid://c3un2lct5gme4" path="res://Scripts/Networking/CharacterSelectV3.cs" id="1_tuf85"]
+[ext_resource type="Script" uid="uid://m761tojwtxsf" path="res://Scripts/Networking/LobbyInfoFeed.cs" id="2_2tj4u"]
 [ext_resource type="PackedScene" uid="uid://ch1vpft72bge5" path="res://Scenes/label_check_box_pair.tscn" id="2_tuf85"]
 
 [node name="Lobby" type="Control"]
@@ -13,29 +15,99 @@ anchors_preset = 0
 
 [node name="IP Field" type="LineEdit" parent="Lobby Menu/Host Menu"]
 offset_left = 342.0
-offset_top = 48.0
-offset_right = 815.0
-offset_bottom = 79.0
+offset_top = 50.0
+offset_right = 817.0
+offset_bottom = 81.0
 placeholder_text = "IP"
 editable = false
 
 [node name="Port Field" type="LineEdit" parent="Lobby Menu/Host Menu"]
 offset_left = 342.0
-offset_top = 79.0
-offset_right = 815.0
-offset_bottom = 110.0
+offset_top = 80.0
+offset_right = 817.0
+offset_bottom = 111.0
 placeholder_text = "Port"
 editable = false
 
 [node name="StartGame" type="Button" parent="Lobby Menu/Host Menu"]
-offset_left = 817.0
+offset_left = 942.0
 offset_top = 483.0
 offset_right = 1142.0
 offset_bottom = 559.0
 text = "Start Game"
 
+[node name="Character_Preview" type="TextureRect" parent="Lobby Menu/Host Menu"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -98.0
+offset_top = 140.0
+offset_right = 127.0
+offset_bottom = 365.0
+grow_horizontal = 2
+
+[node name="Links" type="Button" parent="Lobby Menu/Host Menu"]
+offset_left = 342.0
+offset_top = 225.0
+offset_right = 402.0
+offset_bottom = 285.0
+text = "<"
+
+[node name="Rechts" type="Button" parent="Lobby Menu/Host Menu"]
+offset_left = 757.0
+offset_top = 225.0
+offset_right = 817.0
+offset_bottom = 285.0
+text = ">"
+
+[node name="Other_Players" type="VBoxContainer" parent="Lobby Menu/Host Menu"]
+offset_left = 942.0
+offset_top = 155.0
+offset_right = 1142.0
+offset_bottom = 455.0
+
+[node name="Other_Player1" type="HBoxContainer" parent="Lobby Menu/Host Menu/Other_Players"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Lobby Menu/Host Menu/Other_Players/Other_Player1"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Lobby Menu/Host Menu/Other_Players/Other_Player1"]
+layout_mode = 2
+
+[node name="Other_Player2" type="HBoxContainer" parent="Lobby Menu/Host Menu/Other_Players"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Lobby Menu/Host Menu/Other_Players/Other_Player2"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Lobby Menu/Host Menu/Other_Players/Other_Player2"]
+layout_mode = 2
+
+[node name="Other_Player3" type="HBoxContainer" parent="Lobby Menu/Host Menu/Other_Players"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Lobby Menu/Host Menu/Other_Players/Other_Player3"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Lobby Menu/Host Menu/Other_Players/Other_Player3"]
+layout_mode = 2
+
+[node name="Character_Select" type="Node" parent="Lobby Menu/Host Menu"]
+script = ExtResource("1_tuf85")
+
+[node name="Feed" type="RichTextLabel" parent="Lobby Menu/Host Menu"]
+offset_left = 10.0
+offset_top = 483.0
+offset_right = 210.0
+offset_bottom = 633.0
+script = ExtResource("2_2tj4u")
+
 [node name="Leave" type="Button" parent="Lobby Menu"]
-offset_left = 817.0
+offset_left = 942.0
 offset_top = 559.0
 offset_right = 1142.0
 offset_bottom = 635.0
@@ -85,6 +157,7 @@ grow_vertical = 2
 text = "JOIN"
 
 [node name="Join Menu" type="CanvasLayer" parent="."]
+visible = false
 
 [node name="IP Input" type="LineEdit" parent="Join Menu"]
 offset_left = 342.0
@@ -140,6 +213,8 @@ playerInfoContainer = NodePath("../Lobby Menu/Player Info Container")
 playerInfoTemplate = ExtResource("2_tuf85")
 
 [connection signal="pressed" from="Lobby Menu/Host Menu/StartGame" to="UI Manager" method="StartGame"]
+[connection signal="button_down" from="Lobby Menu/Host Menu/Links" to="Lobby Menu/Host Menu/Character_Select" method="Left_Button_Down"]
+[connection signal="button_down" from="Lobby Menu/Host Menu/Rechts" to="Lobby Menu/Host Menu/Character_Select" method="Right_Button_Down"]
 [connection signal="pressed" from="Lobby Menu/Leave" to="UI Manager" method="ResetToStart"]
 [connection signal="pressed" from="Start Menu/Host Game" to="UI Manager" method="StartHostingServer"]
 [connection signal="pressed" from="Start Menu/Join Game" to="UI Manager" method="StartJoiningServer"]

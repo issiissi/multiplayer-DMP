@@ -11,13 +11,12 @@ config_version=5
 [application]
 
 config/name="NetwrokingTest"
-run/main_scene="uid://djssow5i68l4v"
+run/main_scene="uid://biht5sh07rmfo"
 config/features=PackedStringArray("4.5", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
-GameData="*res://Scripts/Game/GameData.cs"
 Lobby="*res://Scripts/Networking/Lobby.cs"
 
 [dotnet]

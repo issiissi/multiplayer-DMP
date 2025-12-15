@@ -50,6 +50,17 @@ public partial class Lobby : Node
     Only Relevant in the Section: Methods for handling any other signals for game logic
     */
     private Dictionary<long, bool> _playersReady = new Dictionary<long, bool>();
+    
+    // Character Select data            !!!!!!!!!Neu!!!!!!!!!
+    private Dictionary<long, int> _characterChoices = new Dictionary<long, int>();
+    private Dictionary<long, bool> _characterReady = new Dictionary<long, bool>();
+
+    public int GetChoiseFor(int playerID)
+    {
+        if(_characterChoices.TryGetValue(playerID, out int choise))
+            return choise;
+        return 0;
+    }
 
     // These signals can be connected to by a UI lobby scene or the game scene.
     [Signal]
@@ -66,6 +77,13 @@ public partial class Lobby : Node
     public delegate void SendClientStateEventHandler(int playerID, bool ready);
     [Signal]
     public delegate void ClientRequestStateEventHandler(int playerID, int targetPlayerID);
+    [Signal]
+    // Character Select Signals !!!!!!!!!Neu!!!!!!!!!
+    public delegate void OnCharacterChoiseChangedEventHandler(int playerID, int characterIndex);
+    [Signal]
+    public delegate void CharacterReadyChangedEventHandler(int playerID, bool ready);
+    [Signal]
+    public delegate void AllCharactersReadyEventHandler(bool allReady);
 
     public override void _EnterTree()
     {
@@ -178,6 +196,7 @@ public partial class Lobby : Node
 
         //Debug Message
         GD.Print("Client: " + Multiplayer.GetUniqueId() + "\t RegisterPlayer: " + newPlayerId);
+        GD.Print($"[Lobby] RegisterPlayer: {newPlayerId} Name={newPlayerInfo["Name"]}");
     }
 
     /*
@@ -191,6 +210,7 @@ public partial class Lobby : Node
 
         //Debug Message
         GD.Print("Client: " + peerId + "\t OnConnectOk");
+        GD.Print($"[Lobby] OnConnectOk: {peerId} Name={_playerInfo["Name"]}");
     }
 
 
@@ -220,7 +240,8 @@ public partial class Lobby : Node
         //{
         //    RemoveMultiplayerPeer();
         //}
-
+        _characterChoices.Remove(id);
+        _characterReady.Remove(id);
         //Debug Message
         GD.Print("Client: " + Multiplayer.GetUniqueId() + "\t OnPlayerDisconnected: " + id);
     }
@@ -303,15 +324,7 @@ public partial class Lobby : Node
             }
         }
 
-        //Check if sender is same as receiver
-        if (senderID == Multiplayer.GetUniqueId())
-        {
-            //Do nothing all changes are already made local
-            return;
-        }
-
-        //Every client updates ui to show which clients are not ready
-        EmitSignal(SignalName.SetClientReady, senderID);
+        EmitSignal(SignalName.SetClientReady, (int)senderID);
     }
 
     /*
@@ -343,14 +356,7 @@ public partial class Lobby : Node
         }
 
         //Check if sender is same as receiver
-        if (senderID == Multiplayer.GetUniqueId())
-        {
-            //Do nothing all changes are already made local
-            return;
-        }
-
-        //Every client updates ui to show which clients are not ready
-        EmitSignal(SignalName.SetClientNotReady, senderID);
+        EmitSignal(SignalName.SetClientNotReady, (int)senderID);
     }
 
     /*
@@ -397,16 +403,73 @@ Sends own id + id it request the ready state from
     }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    public void GoToCharacterSelect()
-    {
-        GD.Print("RPC: Switching to CharacterSelect");
-        GetTree().ChangeSceneToFile("res://Scenes/character_select.tscn");
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     public void GoToGameScene()
     {
         GD.Print("RPC: Switching to GameScene");
         GetTree().ChangeSceneToFile("res://Scenes/map.tscn");
+    }
+
+    // Character Select Methods !!!!!!!!!Neu!!!!!!!!!
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void CS_SetChoice(int characterIndex)
+    {
+        if(!Multiplayer.IsServer()) return;
+
+        long senderID = Multiplayer.GetRemoteSenderId();
+        if (senderID == 0)
+            senderID = Multiplayer.GetUniqueId();
+
+        _characterChoices[senderID] = characterIndex;
+
+        Rpc(nameof(CS_ReceiveChoice), (int)senderID, characterIndex);
+
+        GD.Print($"[Lobby] CS_SetChoice sender={senderID} index={characterIndex}");
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void CS_ReceiveChoice(int playerID, int characterIndex)
+    {
+        _characterChoices[playerID] = characterIndex;
+        EmitSignal(SignalName.OnCharacterChoiseChanged, playerID, characterIndex);
+
+        GD.Print($"[Lobby] CS_ReceiveChoice player={playerID} index={characterIndex}");
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    public void CS_SetReady(bool ready)
+    {
+        long senderID = Multiplayer.GetRemoteSenderId();
+
+        if(!Multiplayer.IsServer()) return;
+
+        _characterReady[senderID] = ready;
+
+        Rpc(nameof(CS_ReceiveReady), (int)senderID, ready);
+
+        bool allReady = true;
+        foreach(long id in _players.Keys)
+        {
+            if (!_characterReady.ContainsKey(id) || !_characterReady[id])
+            {
+                allReady = false;
+                break;
+            }
+        }
+
+        Rpc(nameof(CS_AllReady), allReady);
+    }
+
+
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    private void CS_ReceiveReady(int playerID, bool ready)
+    {
+        EmitSignal(SignalName.CharacterReadyChanged, playerID, ready);
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    private void CS_AllReady(bool allReady)
+    {
+        EmitSignal(SignalName.AllCharactersReady, allReady);
     }
 }

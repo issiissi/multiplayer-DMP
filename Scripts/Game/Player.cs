@@ -14,8 +14,25 @@ public partial class Player : CharacterBody2D
 	public override void _Ready()
 	{
 		anim_sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
-		nameLabel = GetNode<Label>("Label");
-		nameLabel.Text = "Player";
+		nameLabel = GetNode<Label>("Name_InGame");
+
+		long id = GetMultiplayerAuthority();
+
+		TrySetName(id);
+		
+		Lobby.Instance.PlayerConnected += (peerId, info) =>
+		{
+			if (peerId == id) TrySetName(id);
+		};
+
+		if (!IsMultiplayerAuthority())
+            SetProcessInput(false);
+	}
+
+	private void TrySetName(long id)
+	{
+		if (Lobby.Instance._players.TryGetValue(id, out var info) && info.ContainsKey("Name"))
+			nameLabel.Text = info["Name"];
 	}
 
 	public override void _PhysicsProcess(double delta)
