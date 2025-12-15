@@ -84,7 +84,7 @@ public partial class UIManager : Node
         portField.Text = serverPort;
 
         //Add own player info to the container
-        AddPlayerInfoToLobbyMenu(Multiplayer.MultiplayerPeer.GetUniqueId(), Lobby.Instance._playerInfo);
+        //AddPlayerInfoToLobbyMenu(Multiplayer.MultiplayerPeer.GetUniqueId(), Lobby.Instance._playerInfo);
     }
 
 
@@ -138,7 +138,7 @@ public partial class UIManager : Node
         lobbyMenu.Show();
 
         //Add own player info to the container
-        AddPlayerInfoToLobbyMenu(Multiplayer.MultiplayerPeer.GetUniqueId(), Lobby.Instance._playerInfo);
+        //AddPlayerInfoToLobbyMenu(Multiplayer.MultiplayerPeer.GetUniqueId(), Lobby.Instance._playerInfo);
     }
 
     public void CheckBoxToggled(bool marked)
@@ -178,8 +178,8 @@ public partial class UIManager : Node
     {
         if (Multiplayer.IsServer())
         {
-            Lobby.Instance.Rpc(Lobby.MethodName.GoToCharacterSelect);
-            GD.Print("HOST: StartGame pressed → switching to CharacterSelect");
+            Lobby.Instance.Rpc(Lobby.MethodName.GoToGameScene);
+            GD.Print("HOST: StartGame pressed → switching to GameScene");
         }
         else
         {

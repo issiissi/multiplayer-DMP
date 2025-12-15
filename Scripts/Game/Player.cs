@@ -14,11 +14,22 @@ public partial class Player : CharacterBody2D
 		nameLabel = GetNode<Label>("Name_InGame");
 
 		long id = GetMultiplayerAuthority();
-		string name = Lobby.Instance._players[id]["Name"];
-		nameLabel.Text = name;
+
+		TrySetName(id);
+		
+		Lobby.Instance.PlayerConnected += (peerId, info) =>
+		{
+			if (peerId == id) TrySetName(id);
+		};
 
 		if (!IsMultiplayerAuthority())
             SetProcessInput(false);
+	}
+
+	private void TrySetName(long id)
+	{
+		if (Lobby.Instance._players.TryGetValue(id, out var info) && info.ContainsKey("Name"))
+			nameLabel.Text = info["Name"];
 	}
 
 	public override void _PhysicsProcess(double delta)
