@@ -135,7 +135,16 @@ public partial class CharacterSelectV3 : Node
 
 		GD.Print($"[CS] Sent choice={myCharacterIndex} to server");
 
-		Lobby.Instance.Rpc(Lobby.MethodName.ClientUpdateCharacter, myCharacterIndex);
+		if (Multiplayer.IsServer())
+		{
+			//Update for server
+			Lobby.Instance.ClientUpdateCharacter(myCharacterIndex);
+		}
+		else
+		{	
+			//Update for clients
+			Lobby.Instance.RpcId(1, nameof(Lobby.ClientUpdateCharacter), myCharacterIndex);
+		}
 
 	}
 }

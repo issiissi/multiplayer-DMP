@@ -36,76 +36,6 @@ offset_right = 1142.0
 offset_bottom = 559.0
 text = "Start Game"
 
-[node name="Character_Preview" type="TextureRect" parent="Lobby Menu/Host Menu"]
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -98.0
-offset_top = 140.0
-offset_right = 127.0
-offset_bottom = 365.0
-grow_horizontal = 2
-
-[node name="Links" type="Button" parent="Lobby Menu/Host Menu"]
-offset_left = 342.0
-offset_top = 225.0
-offset_right = 402.0
-offset_bottom = 285.0
-text = "<"
-
-[node name="Rechts" type="Button" parent="Lobby Menu/Host Menu"]
-offset_left = 757.0
-offset_top = 225.0
-offset_right = 817.0
-offset_bottom = 285.0
-text = ">"
-
-[node name="Other_Players" type="VBoxContainer" parent="Lobby Menu/Host Menu"]
-offset_left = 942.0
-offset_top = 155.0
-offset_right = 1142.0
-offset_bottom = 455.0
-
-[node name="Other_Player1" type="HBoxContainer" parent="Lobby Menu/Host Menu/Other_Players"]
-custom_minimum_size = Vector2(200, 100)
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Lobby Menu/Host Menu/Other_Players/Other_Player1"]
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="Lobby Menu/Host Menu/Other_Players/Other_Player1"]
-layout_mode = 2
-
-[node name="Other_Player2" type="HBoxContainer" parent="Lobby Menu/Host Menu/Other_Players"]
-custom_minimum_size = Vector2(200, 100)
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Lobby Menu/Host Menu/Other_Players/Other_Player2"]
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="Lobby Menu/Host Menu/Other_Players/Other_Player2"]
-layout_mode = 2
-
-[node name="Other_Player3" type="HBoxContainer" parent="Lobby Menu/Host Menu/Other_Players"]
-custom_minimum_size = Vector2(200, 100)
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Lobby Menu/Host Menu/Other_Players/Other_Player3"]
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="Lobby Menu/Host Menu/Other_Players/Other_Player3"]
-layout_mode = 2
-
-[node name="Character_Select" type="Node" parent="Lobby Menu/Host Menu"]
-script = ExtResource("1_tuf85")
-
-[node name="Feed" type="RichTextLabel" parent="Lobby Menu/Host Menu"]
-offset_left = 10.0
-offset_top = 483.0
-offset_right = 210.0
-offset_bottom = 633.0
-script = ExtResource("2_2tj4u")
-
 [node name="Leave" type="Button" parent="Lobby Menu"]
 offset_left = 942.0
 offset_top = 559.0
@@ -116,6 +46,76 @@ text = "LEAVE"
 [node name="Player Info Container" type="VBoxContainer" parent="Lobby Menu"]
 offset_right = 385.0
 offset_bottom = 40.0
+
+[node name="Character_Preview" type="TextureRect" parent="Lobby Menu"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -98.0
+offset_top = 140.0
+offset_right = 127.0
+offset_bottom = 365.0
+grow_horizontal = 2
+
+[node name="Links" type="Button" parent="Lobby Menu"]
+offset_left = 342.0
+offset_top = 225.0
+offset_right = 402.0
+offset_bottom = 285.0
+text = "<"
+
+[node name="Rechts" type="Button" parent="Lobby Menu"]
+offset_left = 757.0
+offset_top = 225.0
+offset_right = 817.0
+offset_bottom = 285.0
+text = ">"
+
+[node name="Other_Players" type="VBoxContainer" parent="Lobby Menu"]
+offset_left = 942.0
+offset_top = 155.0
+offset_right = 1142.0
+offset_bottom = 463.0
+
+[node name="Other_Player1" type="HBoxContainer" parent="Lobby Menu/Other_Players"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Lobby Menu/Other_Players/Other_Player1"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Lobby Menu/Other_Players/Other_Player1"]
+layout_mode = 2
+
+[node name="Other_Player2" type="HBoxContainer" parent="Lobby Menu/Other_Players"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Lobby Menu/Other_Players/Other_Player2"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Lobby Menu/Other_Players/Other_Player2"]
+layout_mode = 2
+
+[node name="Other_Player3" type="HBoxContainer" parent="Lobby Menu/Other_Players"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Lobby Menu/Other_Players/Other_Player3"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="Lobby Menu/Other_Players/Other_Player3"]
+layout_mode = 2
+
+[node name="Character_Select" type="Node" parent="Lobby Menu"]
+script = ExtResource("1_tuf85")
+
+[node name="Feed" type="RichTextLabel" parent="Lobby Menu"]
+offset_left = 10.0
+offset_top = 483.0
+offset_right = 210.0
+offset_bottom = 633.0
+script = ExtResource("2_2tj4u")
 
 [node name="Start Menu" type="CanvasLayer" parent="."]
 visible = false

@@ -46,6 +46,7 @@ public partial class UIManager : Node
         Lobby.Instance.GameStarted += GameStarted;
         Lobby.Instance.SendClientState += GetRequestedReadyState;
         Lobby.Instance.ClientRequestState += ServerSendReadyState;
+        Lobby.Instance.CharacterReadyChanged += CharacterChangedReady;
     }
 
 
@@ -86,7 +87,6 @@ public partial class UIManager : Node
         //Add own player info to the container
         //AddPlayerInfoToLobbyMenu(Multiplayer.MultiplayerPeer.GetUniqueId(), Lobby.Instance._playerInfo);
     }
-
 
     public void StartJoiningServer()
     {
@@ -141,29 +141,35 @@ public partial class UIManager : Node
         //AddPlayerInfoToLobbyMenu(Multiplayer.MultiplayerPeer.GetUniqueId(), Lobby.Instance._playerInfo);
     }
 
-    public void CheckBoxToggled(bool marked)
+
+    /*************************************************************************
+    Code for Ready Checkbox
+    **************************************************************************/
+    public void CheckBoxToggled(bool ready)
     {
-        if (marked)
+        if (Multiplayer.IsServer())
         {
-            MarkReady();
+            //Update for server
+            Lobby.Instance.ClientUpdateReady(ready);
         }
         else
         {
-            MarkNotReady();
+            //Update for clients
+            Lobby.Instance.RpcId(1, nameof(Lobby.ClientUpdateReady), ready);
         }
     }
 
-    private void MarkReady()
+    public void CharacterChangedReady(long senderID, bool ready)
     {
-        Lobby.Instance.Rpc(Lobby.MethodName.PlayerReady); // Tell the server that this peer is ready
+        if (ready)
+        {
+            SetClientToPressed((int)senderID);
+        }
+        else
+        {
+            SetClientNotPressed((int)senderID);
+        }
     }
-
-
-    private void MarkNotReady()
-    {
-        Lobby.Instance.Rpc(Lobby.MethodName.PlayerNotReady); // Tell the server that this peer is not ready
-    }
-
     private void ShowStartButton()
     {
         startButton.Show();
@@ -173,6 +179,10 @@ public partial class UIManager : Node
     {
         startButton.Hide();
     }
+
+
+
+
 
     public void StartGame()
     {
