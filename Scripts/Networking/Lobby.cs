@@ -44,7 +44,7 @@ public partial class Lobby : Node
     {
         {"Name", "PlayerName"},
         {"CharacterID", "0"},
-        {"PlayerReady", "True"}
+        {"PlayerReady", "false"}
     };
 
 
@@ -265,88 +265,6 @@ public partial class Lobby : Node
     -------------------------------------------------------------------------*/
 
     /*
-    Every client calls this method when a client on the lobby Sets itself to ready
-    */
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void PlayerReady()
-    {
-        long senderID = Multiplayer.GetRemoteSenderId();
-
-        //Only Server keeps track if all clients are ready
-        if (Multiplayer.IsServer())
-        {
-            //Check if player is already in dictionary
-            if (_playersReady.ContainsKey(senderID))
-            {
-                //Mark player as ready
-                _playersReady[senderID] = true;
-            }
-            else
-            {
-                //Add new Player to the dictionary
-                _playersReady.Add(senderID, true);
-            }
-
-            //Check if all players in the lobby are ready
-            if (_playersReady.Keys.Count == _players.Keys.Count && !_playersReady.Keys.Except(_players.Keys).Any())
-            {
-                //Check if all values are tru
-                bool allReady = true;
-                foreach (bool val in _playersReady.Values)
-                {
-                    if (val == false)
-                    {
-                        allReady = false;
-                        break;
-                    }
-                }
-
-                //Emit signal when all are ready
-                if (allReady)
-                {
-                    //Emits the signal to the ui manager to enable the start game button
-                    EmitSignal(SignalName.EnableStartGame, null);
-                    GD.Print("All Clients are ready");
-                }
-            }
-        }
-
-        EmitSignal(SignalName.SetClientReady, (int)senderID);
-    }
-
-    /*
-    Every client calls this method when a client on the lobby Sets itself to not ready
-    */
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void PlayerNotReady()
-    {
-        long senderID = Multiplayer.GetRemoteSenderId();
-
-        //Only Server keeps track if all clients are ready
-        if (Multiplayer.IsServer())
-        {
-            //Check if player is already in dictionary
-            if (_playersReady.ContainsKey(senderID))
-            {
-                //Mark player as ready
-                _playersReady[senderID] = false;
-            }
-            else
-            {
-                //Add new Player to the dictionary
-                _playersReady.Add(senderID, false);
-            }
-
-            //Hide start button
-            EmitSignal(SignalName.DisableStartGame, null);
-
-        }
-
-        //Check if sender is same as receiver
-        EmitSignal(SignalName.SetClientNotReady, (int)senderID);
-    }
-
-    /*
     Server call this method when button to start game is pressed
     */
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
@@ -365,29 +283,6 @@ public partial class Lobby : Node
         EmitSignal(SignalName.GameStarted);
     }
 
-    /*
-    Server call this method when client request states to be synchronized
-    */
-    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void ServerSendSynchronizeStates(int playerID, bool ready)
-    {
-        // Runs on all peers, including clients
-        EmitSignal(SignalName.SendClientState, playerID, ready);
-    }
-
-    /*
-Client sends this to request a state from the server
-Sends own id + id it request the ready state from
-*/
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void ClientRequestReady(int clientPlayerID, int clientRequestID)
-    {
-        if (Multiplayer.IsServer())
-        {
-            //Only Server Responses
-            EmitSignal(SignalName.ClientRequestState, clientPlayerID, clientRequestID);
-        }
-    }
 
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     public void GoToGameScene()
@@ -510,7 +405,4 @@ Sends own id + id it request the ready state from
         return Int32.Parse(characterString);
        
     }
-
-
-
 }

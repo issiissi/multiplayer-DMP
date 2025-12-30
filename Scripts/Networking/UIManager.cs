@@ -14,17 +14,12 @@ public partial class UIManager : Node
     public CanvasLayer startMenu;
     [Export]
     public CanvasLayer joinMenu;
-
     [Export]
     public Button startButton;
-
-
     [Export]
     public VBoxContainer playerInfoContainer;
-
     [Export]
     public PackedScene playerInfoTemplate;
-
     private Dictionary<int, Control> playerInfoData = new Dictionary<int, Control>();
 
 
@@ -40,13 +35,11 @@ public partial class UIManager : Node
         //Subscribe to server events
         Lobby.Instance.PlayerConnected += AddPlayerInfoToLobbyMenu;
         Lobby.Instance.PlayerDisconnected += RemovePlayerInfoFromLobbyMenu;
-        Lobby.Instance.SetClientReady += SetClientToPressed;
-        Lobby.Instance.SetClientNotReady += SetClientNotPressed;
+
         Lobby.Instance.EnableStartGame += ShowStartButton;
         Lobby.Instance.DisableStartGame += HideStartButton;
         Lobby.Instance.GameStarted += GameStarted;
-        Lobby.Instance.SendClientState += GetRequestedReadyState;
-        Lobby.Instance.ClientRequestState += ServerSendReadyState;
+
         Lobby.Instance.CharacterReadyChanged += CharacterChangedReady;
     }
 
@@ -56,8 +49,10 @@ public partial class UIManager : Node
         //Get the name entered in the start menu
         LineEdit nameField = startMenu.GetNode<LineEdit>("Name Input");
         string name = nameField.Text;
-        Lobby.Instance._playerInfo["Name"] = name;
 
+        Lobby.Instance._playerInfo["Name"] = name;
+        Lobby.Instance._playerInfo["CharacterID"] = "0";
+        Lobby.Instance._playerInfo["PlayerReady"] = "false";
 
         //Try starting a server
         Error error = Lobby.Instance.CreateGame();
@@ -78,20 +73,14 @@ public partial class UIManager : Node
         //Assign ip address and port to the menu elements
         string serverIp = GetCurrentlyConnectedIPv4(); //Look in Documentation to determen the correct IP of the server in the Array of IPs
         string serverPort = Lobby.Instance.Port.ToString();
-        foreach (var s in IP.GetLocalAddresses())
-        {
-            GD.Print(s);
-        }
 
         //Add text to line edit
         LineEdit ipField = hostMenu.GetNode<LineEdit>("IP Field");
         LineEdit portField = hostMenu.GetNode<LineEdit>("Port Field");
         ipField.Text = serverIp;
         portField.Text = serverPort;
-
-        //Add own player info to the container
-        //AddPlayerInfoToLobbyMenu(Multiplayer.MultiplayerPeer.GetUniqueId(), Lobby.Instance._playerInfo);
     }
+
 
     public void StartJoiningServer()
     {
@@ -104,6 +93,7 @@ public partial class UIManager : Node
         //Show menu relevant for joining
         joinMenu.Show();
     }
+
 
     public void JoinServer()
     {
@@ -123,7 +113,11 @@ public partial class UIManager : Node
         {
             Lobby.Instance.Port = port;
         }
+
         Lobby.Instance._playerInfo["Name"] = name;
+        Lobby.Instance._playerInfo["CharacterID"] = "0";
+        Lobby.Instance._playerInfo["PlayerReady"] = "false";
+
 
         //Try Joining the Lobby
         Error error = Lobby.Instance.JoinGame(ip);
@@ -139,11 +133,9 @@ public partial class UIManager : Node
         startMenu.Hide();
         hostMenu.Hide();
         startButton.Hide();
+
         //Show relevant menu
         lobbyMenu.Show();
-
-        //Add own player info to the container
-        //AddPlayerInfoToLobbyMenu(Multiplayer.MultiplayerPeer.GetUniqueId(), Lobby.Instance._playerInfo);
     }
 
 
@@ -164,6 +156,7 @@ public partial class UIManager : Node
         }
     }
 
+
     public void CharacterChangedReady(long senderID, bool ready)
     {
         if (ready)
@@ -175,18 +168,18 @@ public partial class UIManager : Node
             SetClientNotPressed((int)senderID);
         }
     }
+
+
     private void ShowStartButton()
     {
         startButton.Show();
     }
 
+
     private void HideStartButton()
     {
         startButton.Hide();
     }
-
-
-
 
 
     public void StartGame()
@@ -209,10 +202,16 @@ public partial class UIManager : Node
         // Create an instance of the template UI element
         Control newPlayerInfoTemplate = playerInfoTemplate.Instantiate<Control>();
 
-        //Assign values to the control
-        newPlayerInfoTemplate.GetNode<LineEdit>("Client Name").Text = newPlayerInfo["Name"];
-        newPlayerInfoTemplate.GetNode<CheckBox>("Client Ready").SetPressedNoSignal(false);
+        //Load name of the new client
+        string name = Lobby.Instance._players[playerID]["Name"];
+        newPlayerInfoTemplate.GetNode<LineEdit>("Client Name").Text = name;
 
+        //Load ready state of client
+        bool ready;
+        bool.TryParse(Lobby.Instance._players[playerID]["PlayerReady"], out ready);
+        newPlayerInfoTemplate.GetNode<CheckBox>("Client Ready").SetPressedNoSignal(ready);
+
+        //Make checkbox pressable or not based on the ID
         if (playerID == Multiplayer.GetUniqueId())
         {
             newPlayerInfoTemplate.GetNode<CheckBox>("Client Ready").Disabled = false;
@@ -223,14 +222,11 @@ public partial class UIManager : Node
             newPlayerInfoTemplate.GetNode<CheckBox>("Client Ready").Disabled = true;
         }
 
-
         //Store the value in the dictonary
         playerInfoData.Add(playerID, newPlayerInfoTemplate);
+
         // Add to the container (VBoxContainer)
         playerInfoContainer.AddChild(newPlayerInfoTemplate);
-
-        //Server sends Data to new client to synchronise ready values with the new client
-        Lobby.Instance.Rpc(Lobby.MethodName.ClientRequestReady, Multiplayer.GetUniqueId(), playerID);
     }
 
 
@@ -243,18 +239,19 @@ public partial class UIManager : Node
         playerInfoData.Remove(playerID);
     }
 
+
     public void SetClientToPressed(int playerID)
     {
         Control playerInfoTemplate = playerInfoData[playerID];
         playerInfoTemplate.GetNode<CheckBox>("Client Ready").SetPressedNoSignal(true);
     }
 
+
     public void SetClientNotPressed(int playerID)
     {
         Control playerInfoTemplate = playerInfoData[playerID];
         playerInfoTemplate.GetNode<CheckBox>("Client Ready").SetPressedNoSignal(false);
     }
-
 
 
     //Called by a signal from the server
@@ -291,33 +288,6 @@ public partial class UIManager : Node
         joinMenu.Hide();
         startButton.Hide();
         startMenu.Show();
-    }
-
-
-
-
-    public void ServerSendReadyState(int playerID, int targetPlayerID)
-    {
-        //Get the state of the target client
-        Control playerInfoTemplate = playerInfoData[targetPlayerID];
-        bool ready = playerInfoTemplate.GetNode<CheckBox>("Client Ready").ButtonPressed;
-
-        if (Multiplayer.IsServer())
-        {
-            Lobby.Instance.RpcId(playerID, Lobby.MethodName.ServerSendSynchronizeStates, targetPlayerID, ready);
-        }
-    }
-
-    public void GetRequestedReadyState(int playerID, bool ready)
-    {
-        if (ready)
-        {
-            SetClientToPressed(playerID);
-        }
-        else
-        {
-            SetClientNotPressed(playerID);
-        }
     }
 
 
