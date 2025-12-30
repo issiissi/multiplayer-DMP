@@ -18,7 +18,7 @@ public partial class Lobby : Node
     [Signal]
     public delegate void ServerDisconnectedEventHandler();
 
-    
+
     //Variables for setting up the server
     [Export]
     public int Port = 7000;
@@ -54,7 +54,7 @@ public partial class Lobby : Node
     */
     private Dictionary<long, bool> _playersReady = new Dictionary<long, bool>();
 
- 
+
     // These signals can be connected to by a UI lobby scene or the game scene.
     [Signal]
     public delegate void EnableStartGameEventHandler();
@@ -77,7 +77,7 @@ public partial class Lobby : Node
     [Signal]
     public delegate void AllCharactersReadyEventHandler(bool allReady);
 
-// on game started
+    // on game started
     public override void _EnterTree()
     {
         Instance = this;
@@ -398,11 +398,11 @@ public partial class Lobby : Node
         // Now this runs all clients and server
     }
 
-// character for fitting playerID
- public int GetChoiseFor(int playerID)
+    // character for fitting playerID
+    public int GetChoiseFor(int playerID)
     {
         string characterString = _players[playerID]["CharacterID"];
         return Int32.Parse(characterString);
-       
+
     }
 }

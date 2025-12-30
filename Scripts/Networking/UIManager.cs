@@ -36,8 +36,11 @@ public partial class UIManager : Node
         Lobby.Instance.PlayerConnected += AddPlayerInfoToLobbyMenu;
         Lobby.Instance.PlayerDisconnected += RemovePlayerInfoFromLobbyMenu;
 
-        Lobby.Instance.EnableStartGame += ShowStartButton;
-        Lobby.Instance.DisableStartGame += HideStartButton;
+        //Lobby.Instance.EnableStartGame += ShowStartButton;
+        //Lobby.Instance.DisableStartGame += HideStartButton;
+
+        Lobby.Instance.AllCharactersReady += ChangeVisibilityStartButton;
+
         Lobby.Instance.GameStarted += GameStarted;
 
         Lobby.Instance.CharacterReadyChanged += CharacterChangedReady;
@@ -169,16 +172,19 @@ public partial class UIManager : Node
         }
     }
 
-
-    private void ShowStartButton()
+    /*************************************************************************
+    Code for showing start button
+    **************************************************************************/
+    public void ChangeVisibilityStartButton(bool visible)
     {
-        startButton.Show();
-    }
-
-
-    private void HideStartButton()
-    {
-        startButton.Hide();
+        if (visible)
+        {
+            startButton.Show();
+        }
+        else
+        {
+            startButton.Hide();
+        }
     }
 
 
