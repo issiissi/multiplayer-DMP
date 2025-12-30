@@ -2,9 +2,6 @@ using Godot;
 using System;
 using Godot.Collections;
 using System.Net.NetworkInformation;
-using System;
-using System.Net;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
 
 public partial class UIManager : Node

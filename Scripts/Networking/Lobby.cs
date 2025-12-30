@@ -1,13 +1,14 @@
 using System;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Xml.Serialization;
 using Godot;
 using Godot.Collections; //Important to not Confuse with c# System.Collections.Generic
+
+
 public partial class Lobby : Node
 {
     //Static instace that is always Accesable by all scripts
     public static Lobby Instance { get; private set; }
+
 
     // These signals can be connected to by a UI lobby scene or the game scene.
     [Signal]
@@ -17,9 +18,8 @@ public partial class Lobby : Node
     [Signal]
     public delegate void ServerDisconnectedEventHandler();
 
-    /*
-    Variables for setting up the server
-    */
+    
+    //Variables for setting up the server
     [Export]
     public int Port = 7000;
     [Export]
@@ -40,7 +40,6 @@ public partial class Lobby : Node
     before the connection is made. It will be passed to every other peer.
     For example, the value of "name" can be set to something the player entered in a UI scene.
     */
-
     public Dictionary<string, string> _playerInfo = new Dictionary<string, string>()
     {
         {"Name", "PlayerName"},
@@ -55,17 +54,7 @@ public partial class Lobby : Node
     */
     private Dictionary<long, bool> _playersReady = new Dictionary<long, bool>();
 
-    // Character Select data            !!!!!!!!!Neu!!!!!!!!!
-    //private Dictionary<long, int> _characterChoices = new Dictionary<long, int>();
-    //private Dictionary<long, bool> _characterReady = new Dictionary<long, bool>();//Ende neu
-
-    public int GetChoiseFor(int playerID)
-    {
-        string characterString = _players[playerID]["CharacterID"];
-        return Int32.Parse(characterString);
-       
-    }
-
+ 
     // These signals can be connected to by a UI lobby scene or the game scene.
     [Signal]
     public delegate void EnableStartGameEventHandler();
@@ -82,13 +71,13 @@ public partial class Lobby : Node
     [Signal]
     public delegate void ClientRequestStateEventHandler(int playerID, int targetPlayerID);
     [Signal]
-    // Character Select Signals !!!!!!!!!Neu!!!!!!!!!
     public delegate void OnCharacterChoiseChangedEventHandler(int playerID, int characterIndex);
     [Signal]
     public delegate void CharacterReadyChangedEventHandler(long playerID, bool ready);
     [Signal]
-    public delegate void AllCharactersReadyEventHandler(bool allReady);//Ende neu
+    public delegate void AllCharactersReadyEventHandler(bool allReady);
 
+// on game started
     public override void _EnterTree()
     {
         Instance = this;
@@ -124,6 +113,7 @@ public partial class Lobby : Node
         Multiplayer.MultiplayerPeer = peer;
         return Error.Ok;
     }
+
 
     /*
     Creates a Multiplayer.MultiplayerPeer that is also a server
@@ -190,7 +180,6 @@ public partial class Lobby : Node
     /*
     This method is Receives _playerInfo from each client in the lobby when this client connects to the lobby
     */
-
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void RegisterPlayer(Dictionary<string, string> newPlayerInfo)
     {
@@ -202,6 +191,7 @@ public partial class Lobby : Node
         GD.Print("Client: " + Multiplayer.GetUniqueId() + "\t RegisterPlayer: " + newPlayerId);
         GD.Print($"[Lobby] RegisterPlayer: {newPlayerId} Name={newPlayerInfo["Name"]}");
     }
+
 
     /*
     This method is Called by the client who connects to the server when connection was successful
@@ -216,8 +206,6 @@ public partial class Lobby : Node
         GD.Print("Client: " + peerId + "\t OnConnectOk");
         GD.Print($"[Lobby] OnConnectOk: {peerId} Name={_playerInfo["Name"]}");
     }
-
-
 
 
     /*-------------------------------------------------------------------------
@@ -270,11 +258,6 @@ public partial class Lobby : Node
 
         GD.Print("Client: " + Multiplayer.GetUniqueId() + "\t OnConnectionFail");
     }
-
-
-
-
-
 
 
     /*-------------------------------------------------------------------------
@@ -414,9 +397,8 @@ Sends own id + id it request the ready state from
     }
 
 
-    
     /// <summary>
-    /// CLient calls Method on Server to update
+    /// runs on server and calls update of characterselect on every client
     /// </summary>
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     public void ClientUpdateCharacter(int characterIndex)
@@ -427,7 +409,6 @@ Sends own id + id it request the ready state from
         long senderID = Multiplayer.GetRemoteSenderId();
 
         // If the Host calls this function directly (not via RPC), senderID is 0. 
-        // We fix it to be the Host's ID.
         if (senderID == 0) senderID = Multiplayer.GetUniqueId();
 
         GD.Print($"[Lobby HOST] Received Character Update Request from: {senderID}. Broadcasting...");
@@ -438,12 +419,11 @@ Sends own id + id it request the ready state from
 
 
     /// <summary>
-    /// Server calls this method and runs on each client
+    /// every client resieves update on characterselect of client
     /// </summary>
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void BroadcastClientUpdateCharacter(long senderID, int characterIndex)
     {
-        // Now this runs on the Server too!
         if (_players.ContainsKey(senderID))
         {
             _players[senderID]["CharacterID"] = characterIndex.ToString();
@@ -456,7 +436,7 @@ Sends own id + id it request the ready state from
 
 
     /// <summary>
-    /// CLient calls Method on Server to update
+    /// runs on server and calls update of readystate on every client
     /// </summary>
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     public void ClientUpdateReady(bool ready)
@@ -475,13 +455,13 @@ Sends own id + id it request the ready state from
         Rpc(nameof(BroadcastClientUpdateReady), senderID, ready);
     }
 
+
     /// <summary>
-    /// Server calls this method and runs on each client
+    /// every client resieves update on readystate of client
     /// </summary>
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void BroadcastClientUpdateReady(long senderID, bool ready)
     {
-        // Now this runs on the Server too!
         if (_players.ContainsKey(senderID))
         {
             _players[senderID]["PlayerReady"] = ready.ToString();
@@ -491,10 +471,7 @@ Sends own id + id it request the ready state from
 
         //Emit Signal that character is ready
         EmitSignal(SignalName.CharacterReadyChanged, senderID, ready);
-
     }
-
-
 
 
     /// <summary>
@@ -503,7 +480,6 @@ Sends own id + id it request the ready state from
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     public void ClientUpdate()
     {
-        // Only the server should process the request and decide to broadcast
         if (!Multiplayer.IsServer()) return;
 
         long senderID = Multiplayer.GetRemoteSenderId();
@@ -517,6 +493,7 @@ Sends own id + id it request the ready state from
 
     }
 
+
     /// <summary>
     /// Server calls this method and runs on each client
     /// </summary>
@@ -526,8 +503,14 @@ Sends own id + id it request the ready state from
         // Now this runs all clients and server
     }
 
+// character for fitting playerID
+ public int GetChoiseFor(int playerID)
+    {
+        string characterString = _players[playerID]["CharacterID"];
+        return Int32.Parse(characterString);
+       
+    }
 
 
 
-
-}//Ende neu
+}
