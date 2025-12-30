@@ -63,9 +63,7 @@ public partial class Lobby : Node
     {
         string characterString = _players[playerID]["CharacterID"];
         return Int32.Parse(characterString);
-        //if (_characterChoices.TryGetValue(playerID, out int choise))
-        //   return choise;
-        //return 0;
+       
     }
 
     // These signals can be connected to by a UI lobby scene or the game scene.
@@ -416,39 +414,7 @@ Sends own id + id it request the ready state from
     }
 
 
-    /*
-        // Character Select Methods !!!!!!!!!Neu!!!!!!!!!
-        [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-        public void CS_SetChoice(int characterIndex)
-        {
-            string characterString = characterIndex.ToString();
-            long senderID = Multiplayer.GetRemoteSenderId();
-            _players[senderID]["CharacterID"] = characterString;
-
-            if (!Multiplayer.IsServer()) return;
-
-            long senderID = Multiplayer.GetRemoteSenderId();
-            if (senderID == 0)
-                senderID = Multiplayer.GetUniqueId();
-
-            _characterChoices[senderID] = characterIndex;
-
-            Rpc(nameof(CS_ReceiveChoice), (int)senderID, characterIndex);
-
-            Rpc(nameof(CS_ReceiveChoice), (int)senderID, characterIndex);
-            GD.Print($"[Lobby] CS_SetChoice sender={senderID} index={characterIndex}");
-        }
-
-        [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-        private void CS_ReceiveChoice(int playerID, int characterIndex)
-        {
-            _characterChoices[playerID] = characterIndex;
-            EmitSignal(SignalName.OnCharacterChoiseChanged, playerID, characterIndex);
-
-            GD.Print($"[Lobby] CS_ReceiveChoice player={playerID} index={characterIndex}");
-        }
-    */
-
+    
     /// <summary>
     /// CLient calls Method on Server to update
     /// </summary>
@@ -528,67 +494,6 @@ Sends own id + id it request the ready state from
 
     }
 
-    /*
-        //Emit Signal for UI
-
-        //Server logic 
-        if (Multiplayer.IsServer())
-        {
-            bool allReady = true;
-            foreach (long id in _players.Keys)
-            {
-                bool result = bool.TryParse(_players[id]["PlayerReady"], out bool value) && value;
-
-                if (result == false)
-                {
-                    allReady = false;
-                    break;
-                }
-            }
-            EmitSignal(SignalName.AllCharactersReady, allReady);
-            GD.Print($"[Lobby HOST] All Player Ready:: {allReady}");
-        }
-        */
-
-    /*[Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    public void CS_SetReady(bool ready)
-
-    {
-        long senderID = Multiplayer.GetRemoteSenderId();
-
-        if (!Multiplayer.IsServer()) return;
-
-        _characterReady[senderID] = ready;
-
-        Rpc(nameof(CS_ReceiveReady), (int)senderID, ready);
-
-        bool allReady = true;
-        foreach (long id in _players.Keys)
-        {
-            if (!_characterReady.ContainsKey(id) || !_characterReady[id])
-            {
-                allReady = false;
-                break;
-            }
-        }
-
-        Rpc(nameof(CS_AllReady), allReady);
-    }
-
-
-
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void CS_ReceiveReady(int playerID, bool ready)
-    {
-        EmitSignal(SignalName.CharacterReadyChanged, playerID, ready);
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    private void CS_AllReady(bool allReady)
-    {
-        EmitSignal(SignalName.AllCharactersReady, allReady);
-    }
-*/
 
 
 

@@ -2,6 +2,10 @@ using Godot;
 using System;
 using Godot.Collections;
 using System.Net.NetworkInformation;
+using System;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 
 public partial class UIManager : Node
 {
@@ -75,8 +79,12 @@ public partial class UIManager : Node
         hostMenu.Show();
 
         //Assign ip address and port to the menu elements
-        string serverIp = IP.GetLocalAddresses()[1]; //Look in Documentation to determen the correct IP of the server in the Array of IPs
+        string serverIp = GetCurrentlyConnectedIPv4(); //Look in Documentation to determen the correct IP of the server in the Array of IPs
         string serverPort = Lobby.Instance.Port.ToString();
+        foreach (var s in IP.GetLocalAddresses())
+        {
+            GD.Print(s);
+        }
 
         //Add text to line edit
         LineEdit ipField = hostMenu.GetNode<LineEdit>("IP Field");
@@ -314,4 +322,33 @@ public partial class UIManager : Node
             SetClientNotPressed(playerID);
         }
     }
+
+
+    static string GetCurrentlyConnectedIPv4()
+    {
+        foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
+        {
+            // Only Ethernet or Wi-Fi interfaces that are up
+            if (ni.OperationalStatus == OperationalStatus.Up &&
+                (ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet ||
+                 ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211))
+            {
+                var ipProps = ni.GetIPProperties();
+
+                // Check if it has a valid default gateway
+                if (ipProps.GatewayAddresses.Count > 0)
+                {
+                    foreach (UnicastIPAddressInformation ip in ipProps.UnicastAddresses)
+                    {
+                        if (ip.Address.AddressFamily == AddressFamily.InterNetwork)
+                        {
+                            return ip.Address.ToString();
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
 }
+
