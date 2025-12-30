@@ -452,31 +452,29 @@ Sends own id + id it request the ready state from
     /// <summary>
     /// CLient calls Method on Server to update
     /// </summary>
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true),]
-    private void ClientUpdateCharacter(int characterIndex)
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    public void ClientUpdateCharacter(int characterIndex)
     {
         long senderID = Multiplayer.GetRemoteSenderId();
 
         if (Multiplayer.IsServer())
         {
+            GD.Print($"[Lobby HOST] Broadcast Character Update User: {senderID} Character index: {characterIndex}");
             Rpc(nameof(BroadcastClientUpdateCharacter), senderID, characterIndex);
         }
-
     }
 
     /// <summary>
     /// Server calls this method and runs on each client
     /// </summary>
-
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true)]
     private void BroadcastClientUpdateCharacter(long senderID, int characterIndex)
     {
         string characterString = characterIndex.ToString();
         _players[senderID]["CharacterID"] = characterString;
-        GD.Print($"client: {Multiplayer.GetUniqueId()} Characterupdate user:{senderID} Character index: {characterIndex}");
+        GD.Print($"[Lobby] Client: {Multiplayer.GetUniqueId()} Characterupdate User:{senderID} Character Index: {characterIndex}");
 
         EmitSignal(SignalName.OnCharacterChoiseChanged, senderID, characterIndex);
-
     }
 
 
@@ -490,9 +488,9 @@ Sends own id + id it request the ready state from
 
         if (Multiplayer.IsServer())
         {
+            GD.Print($"[Lobby HOST] Broadcast Ready Update User: {senderID} Ready: {ready}");
             Rpc(nameof(BroadcastClientUpdateReady), senderID, ready);
         }
-
     }
 
     /// <summary>
@@ -574,7 +572,7 @@ Sends own id + id it request the ready state from
     /// <summary>
     /// CLient calls Method on Server to update
     /// </summary>
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
     private void ClientUpdate()
     {
         long senderID = Multiplayer.GetRemoteSenderId();

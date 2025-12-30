@@ -21,6 +21,8 @@ public partial class CharacterSelectV3 : Node
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		GD.Print($"[CS] _Ready instance={GetInstanceId()} isServer={Multiplayer.IsServer()}");
+
 		myID = Multiplayer.GetUniqueId();
 
 		Get_Character_Textures();
@@ -28,23 +30,23 @@ public partial class CharacterSelectV3 : Node
 
 		Refresh_MyPreview();
 
-		Lobby.Instance.Rpc(Lobby.MethodName.ClientUpdateCharacter, myCharacterIndex);
+		Lobby.Instance.RpcId(1, Lobby.MethodName.ClientUpdateCharacter, myCharacterIndex);
 
-		Refresh_OtherPreviews();
+		//Refresh_OtherPreviews();
 	}
 
 	private void Get_Character_Textures()
-    {
-        characters.Add(ResourceLoader.Load<Texture2D>("Assets//CharacterPreview//player_cyberpunk.png"));
+	{
+		characters.Add(ResourceLoader.Load<Texture2D>("Assets//CharacterPreview//player_cyberpunk.png"));
 		characters.Add(ResourceLoader.Load<Texture2D>("Assets//CharacterPreview//player_knight.png"));
 		characters.Add(ResourceLoader.Load<Texture2D>("Assets//CharacterPreview//player_cat.png"));
-    }
+	}
 
 	private void Get_UI_Nodes()
-    {
+	{
 		myCharacterPreview = GetNode<TextureRect>("../Character_Preview");
 		leftButton = GetNode<Button>("../Links");
-        rightButton = GetNode<Button>("../Rechts");
+		rightButton = GetNode<Button>("../Rechts");
 
 		otherPlayerNames = new Label[]
 		{
@@ -60,17 +62,18 @@ public partial class CharacterSelectV3 : Node
 			GetNode<TextureRect>("../Other_Players/Other_Player3/TextureRect")
 		};
 
-		leftButton.ButtonDown += Left_Button_Down;
-		rightButton.ButtonDown += Right_Button_Down;
-    }
+		leftButton.Pressed += Left_Button_Down;
+		rightButton.Pressed += Right_Button_Down;
+	}
 
 	private void Left_Button_Down()
 	{
-		GD.Print($"[CS] Left pressed. myId={myID} index={myCharacterIndex}");
 
 		if (characters.Count == 0) return;
 
 		myCharacterIndex = (myCharacterIndex - 1 + characters.Count) % characters.Count;
+		GD.Print($"[CS] Left pressed. ClientID={myID} Character Index={myCharacterIndex}");
+
 		Refresh_MyPreview();
 
 		SendChoiceToServer();
@@ -78,15 +81,16 @@ public partial class CharacterSelectV3 : Node
 
 	private void Right_Button_Down()
 	{
-		GD.Print($"[CS] right pressed. myId={myID} index={myCharacterIndex}");
-
 		if (characters.Count == 0) return;
 
 		myCharacterIndex = (myCharacterIndex + 1) % characters.Count;
+
+		GD.Print($"[CS] Right pressed. ClientID={myID} Character Index={myCharacterIndex}");
+
 		Refresh_MyPreview();
 
 		SendChoiceToServer();
-		
+
 	}
 
 	private void Refresh_MyPreview()
@@ -122,19 +126,16 @@ public partial class CharacterSelectV3 : Node
 	}
 
 	private void SendChoiceToServer()
-{
-    if (Multiplayer.MultiplayerPeer == null)
-    {
-        GD.PrintErr("[CS] No MultiplayerPeer set, cannot send RPC.");
-        return;
-    }
+	{
+		if (Multiplayer.MultiplayerPeer == null)
+		{
+			GD.PrintErr("[CS] No MultiplayerPeer set, cannot send RPC.");
+			return;
+		}
 
-    // Server hat immer ID = 1
-    
-        // Client: gezielt an Server schicken
-        Lobby.Instance.RpcId(1, Lobby.MethodName.ClientUpdateCharacter, myCharacterIndex);
-    
+		GD.Print($"[CS] Sent choice={myCharacterIndex} to server");
 
-    GD.Print($"[CS] Sent choice={myCharacterIndex} to server");
-}
+		Lobby.Instance.Rpc(Lobby.MethodName.ClientUpdateCharacter, myCharacterIndex);
+
+	}
 }

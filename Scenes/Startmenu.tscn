@@ -213,8 +213,6 @@ playerInfoContainer = NodePath("../Lobby Menu/Player Info Container")
 playerInfoTemplate = ExtResource("2_tuf85")
 
 [connection signal="pressed" from="Lobby Menu/Host Menu/StartGame" to="UI Manager" method="StartGame"]
-[connection signal="button_down" from="Lobby Menu/Host Menu/Links" to="Lobby Menu/Host Menu/Character_Select" method="Left_Button_Down"]
-[connection signal="button_down" from="Lobby Menu/Host Menu/Rechts" to="Lobby Menu/Host Menu/Character_Select" method="Right_Button_Down"]
 [connection signal="pressed" from="Lobby Menu/Leave" to="UI Manager" method="ResetToStart"]
 [connection signal="pressed" from="Start Menu/Host Game" to="UI Manager" method="StartHostingServer"]
 [connection signal="pressed" from="Start Menu/Join Game" to="UI Manager" method="StartJoiningServer"]
