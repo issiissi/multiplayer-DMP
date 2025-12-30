@@ -1,5 +1,7 @@
+using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 using Godot;
 using Godot.Collections; //Important to not Confuse with c# System.Collections.Generic
 public partial class Lobby : Node
@@ -41,7 +43,9 @@ public partial class Lobby : Node
 
     public Dictionary<string, string> _playerInfo = new Dictionary<string, string>()
     {
-        { "Name", "PlayerName" },
+        {"Name", "PlayerName"},
+        {"CharacterID", "0"},
+        {"PlayerReady", "True"}
     };
 
 
@@ -50,16 +54,18 @@ public partial class Lobby : Node
     Only Relevant in the Section: Methods for handling any other signals for game logic
     */
     private Dictionary<long, bool> _playersReady = new Dictionary<long, bool>();
-    
+
     // Character Select data            !!!!!!!!!Neu!!!!!!!!!
-    private Dictionary<long, int> _characterChoices = new Dictionary<long, int>();
-    private Dictionary<long, bool> _characterReady = new Dictionary<long, bool>();
+    //private Dictionary<long, int> _characterChoices = new Dictionary<long, int>();
+    //private Dictionary<long, bool> _characterReady = new Dictionary<long, bool>();//Ende neu
 
     public int GetChoiseFor(int playerID)
     {
-        if(_characterChoices.TryGetValue(playerID, out int choise))
-            return choise;
-        return 0;
+        string characterString = _players[playerID]["CharacterID"];
+        return Int32.Parse(characterString);
+        //if (_characterChoices.TryGetValue(playerID, out int choise))
+        //   return choise;
+        //return 0;
     }
 
     // These signals can be connected to by a UI lobby scene or the game scene.
@@ -83,7 +89,7 @@ public partial class Lobby : Node
     [Signal]
     public delegate void CharacterReadyChangedEventHandler(int playerID, bool ready);
     [Signal]
-    public delegate void AllCharactersReadyEventHandler(bool allReady);
+    public delegate void AllCharactersReadyEventHandler(bool allReady);//Ende neu
 
     public override void _EnterTree()
     {
@@ -240,8 +246,8 @@ public partial class Lobby : Node
         //{
         //    RemoveMultiplayerPeer();
         //}
-        _characterChoices.Remove(id);
-        _characterReady.Remove(id);
+        //_characterChoices.Remove(id);
+        // _characterReady.Remove(id);
         //Debug Message
         GD.Print("Client: " + Multiplayer.GetUniqueId() + "\t OnPlayerDisconnected: " + id);
     }
@@ -409,11 +415,17 @@ Sends own id + id it request the ready state from
         GetTree().ChangeSceneToFile("res://Scenes/map.tscn");
     }
 
+
+/*
     // Character Select Methods !!!!!!!!!Neu!!!!!!!!!
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     public void CS_SetChoice(int characterIndex)
     {
-        if(!Multiplayer.IsServer()) return;
+        string characterString = characterIndex.ToString();
+        long senderID = Multiplayer.GetRemoteSenderId();
+        _players[senderID]["CharacterID"] = characterString;
+
+        if (!Multiplayer.IsServer()) return;
 
         long senderID = Multiplayer.GetRemoteSenderId();
         if (senderID == 0)
@@ -423,6 +435,7 @@ Sends own id + id it request the ready state from
 
         Rpc(nameof(CS_ReceiveChoice), (int)senderID, characterIndex);
 
+        Rpc(nameof(CS_ReceiveChoice), (int)senderID, characterIndex);
         GD.Print($"[Lobby] CS_SetChoice sender={senderID} index={characterIndex}");
     }
 
@@ -434,20 +447,102 @@ Sends own id + id it request the ready state from
 
         GD.Print($"[Lobby] CS_ReceiveChoice player={playerID} index={characterIndex}");
     }
+*/
 
+    /// <summary>
+    /// CLient calls Method on Server to update
+    /// </summary>
     [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
-    public void CS_SetReady(bool ready)
+    private void ClientUpdateCharacter(int characterIndex)
     {
         long senderID = Multiplayer.GetRemoteSenderId();
 
-        if(!Multiplayer.IsServer()) return;
+        if (Multiplayer.IsServer())
+        {
+            Rpc(nameof(BroadcastClientUpdateCharacter), senderID, characterIndex);
+        }
+
+    }
+
+    /// <summary>
+    /// Server calls this method and runs on each client
+    /// </summary>
+
+    [Rpc(MultiplayerApi.RpcMode.Authority)]
+    private void BroadcastClientUpdateCharacter(long senderID, int characterIndex)
+    {
+        string characterString = characterIndex.ToString();
+        _players[senderID]["CharacterID"] = characterString;
+        GD.Print($"client: {Multiplayer.GetUniqueId} Characterupdate user:{senderID} Character index: {characterIndex}");
+
+                EmitSignal(SignalName.OnCharacterChoiseChanged, senderID, characterIndex);
+
+    }
+
+
+    /// <summary>
+    /// CLient calls Method on Server to update
+    /// </summary>
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void ClientUpdateReady(bool ready)
+    {
+        long senderID = Multiplayer.GetRemoteSenderId();
+
+        if (Multiplayer.IsServer())
+        {
+            Rpc(nameof(BroadcastClientUpdateReady), senderID, ready);
+        }
+
+    }
+
+    /// <summary>
+    /// Server calls this method and runs on each client
+    /// </summary>
+
+    [Rpc(MultiplayerApi.RpcMode.Authority)]
+    private void BroadcastClientUpdateReady(long senderID, bool ready)
+    {
+        string readyString = ready.ToString();
+        _players[senderID]["PlayerReady"] = readyString;
+        GD.Print($"client: {Multiplayer.GetUniqueId} Readyupdate user:{senderID} Ready: {readyString}");
+
+        EmitSignal(SignalName.CharacterReadyChanged, senderID, ready);
+
+        //Server logic 
+        if (Multiplayer.IsServer())
+        {
+            bool allReady = true;
+            foreach (long id in _players.Keys)
+            { 
+                bool result = bool.TryParse(_players[senderID]["PlayerReady"], out bool value) && value;
+
+                if (result==false)
+                {
+                    allReady = false;
+                    break;
+                }
+            }
+            EmitSignal(SignalName.AllCharactersReady, allReady);
+        }
+    }
+
+
+
+
+    /*[Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    public void CS_SetReady(bool ready)
+
+    {
+        long senderID = Multiplayer.GetRemoteSenderId();
+
+        if (!Multiplayer.IsServer()) return;
 
         _characterReady[senderID] = ready;
 
         Rpc(nameof(CS_ReceiveReady), (int)senderID, ready);
 
         bool allReady = true;
-        foreach(long id in _players.Keys)
+        foreach (long id in _players.Keys)
         {
             if (!_characterReady.ContainsKey(id) || !_characterReady[id])
             {
@@ -472,4 +567,36 @@ Sends own id + id it request the ready state from
     {
         EmitSignal(SignalName.AllCharactersReady, allReady);
     }
-}
+*/
+
+
+
+    /// <summary>
+    /// CLient calls Method on Server to update
+    /// </summary>
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    private void ClientUpdate()
+    {
+        long senderID = Multiplayer.GetRemoteSenderId();
+
+        if (Multiplayer.IsServer())
+        {
+            Rpc(nameof(BroadcastClientUpdate), senderID);
+        }
+
+    }
+
+    /// <summary>
+    /// Server calls this method and runs on each client
+    /// </summary>
+
+    [Rpc(MultiplayerApi.RpcMode.Authority)]
+    private void BroadcastClientUpdate(long senderID)
+    {
+
+    }
+
+
+
+
+}//Ende neu

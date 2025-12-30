@@ -3,20 +3,16 @@
     "tasks": [
         {
             "label": "build",
-            "command": "dotnet",
+            "command": "<insert-godot-executable-path-here>",
             "type": "process",
             "args": [
-                "build"
+                "--build-solutions",
+                "--path",
+                "${workspaceRoot}",
+                "--no-window",
+                "-q"
             ],
-            "problemMatcher": "$msCompile",
-            "presentation": {
-                "echo": true,
-                "reveal": "silent",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            }
+            "problemMatcher": "$msCompile"
         }
     ]
 }

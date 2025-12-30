@@ -28,7 +28,7 @@ public partial class CharacterSelectV3 : Node
 
 		Refresh_MyPreview();
 
-		Lobby.Instance.Rpc(Lobby.MethodName.CS_SetChoice, myCharacterIndex);
+		Lobby.Instance.Rpc(Lobby.MethodName.ClientUpdateCharacter, myCharacterIndex);
 
 		Refresh_OtherPreviews();
 	}
@@ -130,16 +130,10 @@ public partial class CharacterSelectV3 : Node
     }
 
     // Server hat immer ID = 1
-    if (Multiplayer.IsServer())
-    {
-        // Host: direkt ausführen (kein Netzwerk nötig)
-        Lobby.Instance.CS_SetChoice(myCharacterIndex);
-    }
-    else
-    {
+    
         // Client: gezielt an Server schicken
-        Lobby.Instance.RpcId(1, Lobby.MethodName.CS_SetChoice, myCharacterIndex);
-    }
+        Lobby.Instance.RpcId(1, Lobby.MethodName.ClientUpdateCharacter, myCharacterIndex);
+    
 
     GD.Print($"[CS] Sent choice={myCharacterIndex} to server");
 }
