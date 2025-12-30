@@ -416,43 +416,43 @@ Sends own id + id it request the ready state from
     }
 
 
-/*
-    // Character Select Methods !!!!!!!!!Neu!!!!!!!!!
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void CS_SetChoice(int characterIndex)
-    {
-        string characterString = characterIndex.ToString();
-        long senderID = Multiplayer.GetRemoteSenderId();
-        _players[senderID]["CharacterID"] = characterString;
+    /*
+        // Character Select Methods !!!!!!!!!Neu!!!!!!!!!
+        [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+        public void CS_SetChoice(int characterIndex)
+        {
+            string characterString = characterIndex.ToString();
+            long senderID = Multiplayer.GetRemoteSenderId();
+            _players[senderID]["CharacterID"] = characterString;
 
-        if (!Multiplayer.IsServer()) return;
+            if (!Multiplayer.IsServer()) return;
 
-        long senderID = Multiplayer.GetRemoteSenderId();
-        if (senderID == 0)
-            senderID = Multiplayer.GetUniqueId();
+            long senderID = Multiplayer.GetRemoteSenderId();
+            if (senderID == 0)
+                senderID = Multiplayer.GetUniqueId();
 
-        _characterChoices[senderID] = characterIndex;
+            _characterChoices[senderID] = characterIndex;
 
-        Rpc(nameof(CS_ReceiveChoice), (int)senderID, characterIndex);
+            Rpc(nameof(CS_ReceiveChoice), (int)senderID, characterIndex);
 
-        Rpc(nameof(CS_ReceiveChoice), (int)senderID, characterIndex);
-        GD.Print($"[Lobby] CS_SetChoice sender={senderID} index={characterIndex}");
-    }
+            Rpc(nameof(CS_ReceiveChoice), (int)senderID, characterIndex);
+            GD.Print($"[Lobby] CS_SetChoice sender={senderID} index={characterIndex}");
+        }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void CS_ReceiveChoice(int playerID, int characterIndex)
-    {
-        _characterChoices[playerID] = characterIndex;
-        EmitSignal(SignalName.OnCharacterChoiseChanged, playerID, characterIndex);
+        [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+        private void CS_ReceiveChoice(int playerID, int characterIndex)
+        {
+            _characterChoices[playerID] = characterIndex;
+            EmitSignal(SignalName.OnCharacterChoiseChanged, playerID, characterIndex);
 
-        GD.Print($"[Lobby] CS_ReceiveChoice player={playerID} index={characterIndex}");
-    }
-*/
+            GD.Print($"[Lobby] CS_ReceiveChoice player={playerID} index={characterIndex}");
+        }
+    */
 
     /// <summary>
     /// CLient calls Method on Server to update
     /// </summary>
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true),]
     private void ClientUpdateCharacter(int characterIndex)
     {
         long senderID = Multiplayer.GetRemoteSenderId();
@@ -468,14 +468,14 @@ Sends own id + id it request the ready state from
     /// Server calls this method and runs on each client
     /// </summary>
 
-    [Rpc(MultiplayerApi.RpcMode.Authority)]
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true)]
     private void BroadcastClientUpdateCharacter(long senderID, int characterIndex)
     {
         string characterString = characterIndex.ToString();
         _players[senderID]["CharacterID"] = characterString;
-        GD.Print($"client: {Multiplayer.GetUniqueId} Characterupdate user:{senderID} Character index: {characterIndex}");
+        GD.Print($"client: {Multiplayer.GetUniqueId()} Characterupdate user:{senderID} Character index: {characterIndex}");
 
-                EmitSignal(SignalName.OnCharacterChoiseChanged, senderID, characterIndex);
+        EmitSignal(SignalName.OnCharacterChoiseChanged, senderID, characterIndex);
 
     }
 
@@ -483,7 +483,7 @@ Sends own id + id it request the ready state from
     /// <summary>
     /// CLient calls Method on Server to update
     /// </summary>
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void ClientUpdateReady(bool ready)
     {
         long senderID = Multiplayer.GetRemoteSenderId();
@@ -499,12 +499,12 @@ Sends own id + id it request the ready state from
     /// Server calls this method and runs on each client
     /// </summary>
 
-    [Rpc(MultiplayerApi.RpcMode.Authority)]
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true)]
     private void BroadcastClientUpdateReady(long senderID, bool ready)
     {
         string readyString = ready.ToString();
         _players[senderID]["PlayerReady"] = readyString;
-        GD.Print($"client: {Multiplayer.GetUniqueId} Readyupdate user:{senderID} Ready: {readyString}");
+        GD.Print($"client: {Multiplayer.GetUniqueId()} Readyupdate user:{senderID} Ready: {readyString}");
 
         EmitSignal(SignalName.CharacterReadyChanged, senderID, ready);
 
@@ -513,10 +513,10 @@ Sends own id + id it request the ready state from
         {
             bool allReady = true;
             foreach (long id in _players.Keys)
-            { 
+            {
                 bool result = bool.TryParse(_players[senderID]["PlayerReady"], out bool value) && value;
 
-                if (result==false)
+                if (result == false)
                 {
                     allReady = false;
                     break;
@@ -574,7 +574,7 @@ Sends own id + id it request the ready state from
     /// <summary>
     /// CLient calls Method on Server to update
     /// </summary>
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     private void ClientUpdate()
     {
         long senderID = Multiplayer.GetRemoteSenderId();
@@ -590,7 +590,7 @@ Sends own id + id it request the ready state from
     /// Server calls this method and runs on each client
     /// </summary>
 
-    [Rpc(MultiplayerApi.RpcMode.Authority)]
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true)]
     private void BroadcastClientUpdate(long senderID)
     {
 
