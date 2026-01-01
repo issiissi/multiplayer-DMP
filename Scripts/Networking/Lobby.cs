@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using Godot;
 using Godot.Collections; //Important to not Confuse with c# System.Collections.Generic
 
@@ -78,7 +77,7 @@ public partial class Lobby : Node
     [Signal]
     public delegate void CharacterReadyChangedEventHandler(long playerID, bool ready);
     [Signal]
-    public delegate void AllCharactersReadyEventHandler(bool allReady);
+    public delegate void AllClientsReadyEventHandler(bool allReady);
 
     // on game started
     public override void _EnterTree()
@@ -351,6 +350,7 @@ public partial class Lobby : Node
 
         // Trigger the Broadcast. 
         Rpc(nameof(BroadcastClientUpdateReady), senderID, ready);
+
     }
 
 
@@ -369,6 +369,32 @@ public partial class Lobby : Node
 
         //Emit Signal that character is ready
         EmitSignal(SignalName.CharacterReadyChanged, senderID, ready);
+
+        //Server Checks if all Clients are ready
+        if (Multiplayer.IsServer())
+        {
+            bool allClientsReady = true;
+
+            foreach (Dictionary<string, string> playerInfo in _players.Values)
+            {
+                bool clientReady;
+                bool.TryParse(playerInfo["PlayerReady"], out clientReady);
+                if (!clientReady)
+                {
+                    allClientsReady = false;
+                    break;
+                }
+            }
+
+            //Debug Statement
+            if (allClientsReady)
+            {
+                GD.Print($"[Lobby HOST] All clients are ready");
+            }
+
+            //Signal to host ui if all clients are ready
+            EmitSignal(SignalName.AllClientsReady, allClientsReady);
+        }
     }
 
 

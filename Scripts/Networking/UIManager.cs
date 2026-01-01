@@ -46,7 +46,7 @@ public partial class UIManager : Node
         //Subscribe to server events
         Lobby.Instance.PlayerConnected += AddPlayerInfoToLobbyMenu;
         Lobby.Instance.PlayerDisconnected += RemovePlayerInfoFromLobbyMenu;
-        Lobby.Instance.AllCharactersReady += ChangeVisibilityStartButton;
+        Lobby.Instance.AllClientsReady += ChangeVisibilityStartButton;
         Lobby.Instance.CharacterReadyChanged += ClientUpdateReady;
         Lobby.Instance.OnCharacterChoiseChanged += ClientUpdateCharacter;
     }
@@ -142,7 +142,7 @@ public partial class UIManager : Node
     /// <summary>
     /// When own client changes to ready or not ready
     /// </summary>
-    public void CheckBoxToggled(bool ready)
+    private void SetLocalClientReady(bool ready)
     {
         if (Multiplayer.IsServer())
         {
@@ -160,7 +160,7 @@ public partial class UIManager : Node
     /// <summary>
     /// Update checkbox UI when other clients update ready over network
     /// </summary>
-    public void ClientUpdateReady(long senderID, bool ready)
+    private void ClientUpdateReady(long senderID, bool ready)
     {
         Control playerInfoTemplate = playersInfoUI[senderID];
         playerInfoTemplate.GetNode<CheckBox>("Client Ready").SetPressedNoSignal(ready);
@@ -192,9 +192,9 @@ public partial class UIManager : Node
     /*************************************************************************
     Code for showing Game start button
     **************************************************************************/
-    public void ChangeVisibilityStartButton(bool visible)
+    private void ChangeVisibilityStartButton(bool allReady)
     {
-        if (visible)
+        if (allReady)
         {
             startButton.Show();
         }
@@ -207,15 +207,9 @@ public partial class UIManager : Node
 
     public void StartGame()
     {
-        if (Multiplayer.IsServer())
-        {
-            Lobby.Instance.Rpc(Lobby.MethodName.GoToGameScene);
-            GD.Print("HOST: StartGame pressed → switching to GameScene");
-        }
-        else
-        {
-            GD.Print("CLIENT pressed StartGame → ignored");
-        }
+        Lobby.Instance.Rpc(Lobby.MethodName.GoToGameScene);
+        GD.Print("HOST: StartGame pressed → switching to GameScene");
+
         startButton.Hide();
     }
 
@@ -262,7 +256,7 @@ public partial class UIManager : Node
     /// <summary>
     /// Add new Player to UI when client connects to server
     /// </summary>
-    public void AddPlayerInfoToLobbyMenu(long senderID, Dictionary<string, string> newPlayerInfo)
+    private void AddPlayerInfoToLobbyMenu(long senderID, Dictionary<string, string> newPlayerInfo)
     {
         // Create an instance of the template UI element
         Control newPlayerInfoTemplate = playerInfoTemplate.Instantiate<Control>();
@@ -272,7 +266,7 @@ public partial class UIManager : Node
         {
             newPlayerInfoTemplate.GetNode<CheckBox>("Client Ready").Disabled = false;
             //Add signal to press action
-            newPlayerInfoTemplate.GetNode<CheckBox>("Client Ready").Toggled += CheckBoxToggled;
+            newPlayerInfoTemplate.GetNode<CheckBox>("Client Ready").Toggled += SetLocalClientReady;
         }
         else
         {
@@ -301,7 +295,7 @@ public partial class UIManager : Node
         GD.Print($"[UI] Local Client: {Multiplayer.GetUniqueId()} add new client: {senderID} client state: " + newPlayerInfo.ToString());
     }
 
-    public void RemovePlayerInfoFromLobbyMenu(int playerID)
+    private void RemovePlayerInfoFromLobbyMenu(int playerID)
     {
         //Delete the template from the scene
         playerInfoContainer.RemoveChild(playersInfoUI[playerID]);
@@ -311,16 +305,7 @@ public partial class UIManager : Node
     }
 
 
-    /// <summary>
-    /// Set own client to not ready when game start (Temporary)
-    /// </summary>
-    public void GameStarted()
-    {
-        CheckBoxToggled(false);
-    }
-
-
-    public void ResetToStart()
+    public void LeaveLobby()
     {
         foreach (int key in playersInfoUI.Keys)
         {
@@ -348,7 +333,7 @@ public partial class UIManager : Node
     /*************************************************************************
     Code for Showing diffrent UI states
     **************************************************************************/
-    public void ShowStartMenu()
+    private void ShowStartMenu()
     {
         //Hide menus not relevant for start
         lobbyMenu.Hide();
@@ -384,7 +369,7 @@ public partial class UIManager : Node
         hostMenu.Show();
     }
 
-    public void ShowLobbyMenuClient()
+    private void ShowLobbyMenuClient()
     {
         //Hide menus that are no longer relevant
         joinMenu.Hide();

@@ -208,10 +208,10 @@ bigCharacterPreview = NodePath("../Lobby Menu/Character_Preview")
 playerInfoTemplate = ExtResource("2_tuf85")
 
 [connection signal="pressed" from="Lobby Menu/Host Menu/StartGame" to="UI Manager" method="StartGame"]
-[connection signal="pressed" from="Lobby Menu/Leave" to="UI Manager" method="ResetToStart"]
+[connection signal="pressed" from="Lobby Menu/Leave" to="UI Manager" method="LeaveLobby"]
 [connection signal="pressed" from="Lobby Menu/Links" to="UI Manager" method="PreviousCharacter"]
 [connection signal="pressed" from="Lobby Menu/Rechts" to="UI Manager" method="NextsCharacter"]
 [connection signal="pressed" from="Start Menu/Host Game" to="UI Manager" method="StartHostingServer"]
 [connection signal="pressed" from="Start Menu/Join Game" to="UI Manager" method="ShowJoinMenu"]
 [connection signal="pressed" from="Join Menu/Join Lobby" to="UI Manager" method="JoinServer"]
-[connection signal="pressed" from="Join Menu/Back" to="UI Manager" method="ResetToStart"]
+[connection signal="pressed" from="Join Menu/Back" to="UI Manager" method="LeaveLobby"]
