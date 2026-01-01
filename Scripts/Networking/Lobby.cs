@@ -56,26 +56,9 @@ public partial class Lobby : Node
 
     // These signals can be connected to by a UI lobby scene or the game scene.
     [Signal]
-    public delegate void EnableStartGameEventHandler();
+    public delegate void ClientChangedCharacterEventHandler(long playerID, int characterIndex);
     [Signal]
-    public delegate void DisableStartGameEventHandler();
-    [Signal]
-    public delegate void GameStartedEventHandler();
-    [Signal]
-    public delegate void SetClientReadyEventHandler(int playerID);
-    [Signal]
-    public delegate void SetClientNotReadyEventHandler(int playerID);
-    [Signal]
-    public delegate void SendClientStateEventHandler(int playerID, bool ready);
-    [Signal]
-    public delegate void ClientRequestStateEventHandler(int playerID, int targetPlayerID);
-
-
-    [Signal]
-    public delegate void OnCharacterChoiseChangedEventHandler(long playerID, int characterIndex);
-
-    [Signal]
-    public delegate void CharacterReadyChangedEventHandler(long playerID, bool ready);
+    public delegate void ClientChangedReadyEventHandler(long playerID, bool ready);
     [Signal]
     public delegate void AllClientsReadyEventHandler(bool allReady);
 
@@ -267,25 +250,8 @@ public partial class Lobby : Node
     -------------------------------------------------------------------------*/
 
     /*
-    Server call this method when button to start game is pressed
+    Server call this method on each client when button to start game is pressed
     */
-    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void ServerStartGame()
-    {
-        // Only server updates ready states
-        if (Multiplayer.IsServer())
-        {
-            foreach (long key in _playersReady.Keys)
-                _playersReady[key] = false;
-
-            EmitSignal(SignalName.DisableStartGame); // server-only signal
-        }
-
-        // Runs on all peers, including clients
-        EmitSignal(SignalName.GameStarted);
-    }
-
-
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     public void GoToGameScene()
     {
@@ -328,7 +294,7 @@ public partial class Lobby : Node
 
         GD.Print($"[Lobby] Updating User:{senderID} to Index: {characterIndex} (Local ID: {Multiplayer.GetUniqueId()})");
 
-        EmitSignal(SignalName.OnCharacterChoiseChanged, senderID, characterIndex);
+        EmitSignal(SignalName.ClientChangedCharacter, senderID, characterIndex);
     }
 
 
@@ -368,7 +334,7 @@ public partial class Lobby : Node
         GD.Print($"[Lobby] Updating User:{senderID} to Ready: {ready} (Local ID: {Multiplayer.GetUniqueId()})");
 
         //Emit Signal that character is ready
-        EmitSignal(SignalName.CharacterReadyChanged, senderID, ready);
+        EmitSignal(SignalName.ClientChangedReady, senderID, ready);
 
         //Server Checks if all Clients are ready
         if (Multiplayer.IsServer())

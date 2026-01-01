@@ -1,42 +1,47 @@
 using Godot;
 using System;
-using System.Collections.Generic;
-using GDict = Godot.Collections.Dictionary<string, string>;
+using Godot.Collections;
 
 public partial class LobbyInfoFeed : RichTextLabel
 {
 	private RichTextLabel feed;
 
-	private Dictionary<int, bool> ready = new Dictionary<int, bool>();
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		GD.Print("[Feed] _Ready läuft ✅");
-    	Visible = true;
-		Text = "Feed online ✅\n";
+		Visible = true;
+		Text = "";
 
-		Lobby.Instance.PlayerConnected += OnPlayerConnected;
-		Lobby.Instance.PlayerDisconnected += OnPlayerDisconnected;
-		Lobby.Instance.SetClientReady += OnClientReady;
-		Lobby.Instance.SetClientNotReady += OnClientNotReady;
+		Lobby.Instance.PlayerConnected += OnClientConnect;
+		Lobby.Instance.PlayerDisconnected += OnClientDisconnected;
+		Lobby.Instance.ClientChangedReady += OnClientReadyChanged;
+		Lobby.Instance.ClientChangedCharacter += OnClinetChangedCharacter;
 
-		foreach (var entry in Lobby.Instance._players)
-			OnPlayerConnected((int)entry.Key, entry.Value);
+
 	}
-
-	private void OnPlayerConnected(long peerId, GDict info)
-    {
-        string name = info.ContainsKey("Name") ? info["Name"] : $"Player {peerId}";
-        AddLine($"➡️ {name} (ID {peerId}) ist gejoined.");
-    }
-
-    private void OnPlayerDisconnected(int peerId) => AddLine($"⬅️ Player (ID {peerId}) hat die Lobby verlassen.");
-    private void OnClientReady(int playerId) => AddLine($"🟢 Player {playerId} ist READY.");
-    private void OnClientNotReady(int playerId) => AddLine($"🔴 Player {playerId} ist NOT READY.");
-
-    private void AddLine(string msg)
-    {
-        AppendText(msg + "\n");
+	private void OnClientConnect(long senderID, Dictionary<string, string> newPlayerInfo)
+	{
+		string name = newPlayerInfo["Name"];
+		AddLine($"{name} (ID {senderID}) joined lobby");
+	}
+	private void OnClientDisconnected(int peerId)
+	{
+		AddLine($"Client (ID {peerId}) left lobby");
+	}
+	private void OnClientReadyChanged(long senderID, bool ready)
+	{
+		string name = Lobby.Instance._players[senderID]["Name"];
+		string text = ready ? "Ready" : "not Ready";
+		AddLine($"{name} changed to {text}");
+	}
+	private void OnClinetChangedCharacter(long senderID, int characterIndex)
+	{
+		string name = Lobby.Instance._players[senderID]["Name"];
+		AddLine($"{name} changed character to {characterIndex}");
+	}
+	private void AddLine(string msg)
+	{
+		AppendText(msg + "\n");
 		ScrollToLine(GetLineCount());
-    }
+	}
 }

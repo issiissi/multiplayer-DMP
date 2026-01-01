@@ -47,8 +47,8 @@ public partial class UIManager : Node
         Lobby.Instance.PlayerConnected += AddPlayerInfoToLobbyMenu;
         Lobby.Instance.PlayerDisconnected += RemovePlayerInfoFromLobbyMenu;
         Lobby.Instance.AllClientsReady += ChangeVisibilityStartButton;
-        Lobby.Instance.CharacterReadyChanged += ClientUpdateReady;
-        Lobby.Instance.OnCharacterChoiseChanged += ClientUpdateCharacter;
+        Lobby.Instance.ClientChangedReady += ClientUpdateReady;
+        Lobby.Instance.ClientChangedCharacter += ClientUpdateCharacter;
     }
 
     /*************************************************************************
@@ -190,7 +190,7 @@ public partial class UIManager : Node
 
 
     /*************************************************************************
-    Code for showing Game start button
+    Code for showing Game start button and starting game
     **************************************************************************/
     private void ChangeVisibilityStartButton(bool allReady)
     {
