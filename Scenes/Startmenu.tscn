@@ -13,19 +13,53 @@ anchors_preset = 0
 
 [node name="Host Menu" type="CanvasLayer" parent="Lobby Menu"]
 
+[node name="Label" type="Label" parent="Lobby Menu/Host Menu"]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -298.0
+offset_top = -324.0
+offset_right = -186.0
+offset_bottom = -293.0
+grow_horizontal = 0
+grow_vertical = 2
+text = "IP Address: "
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="Lobby Menu/Host Menu"]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -298.0
+offset_top = -288.0
+offset_right = -186.0
+offset_bottom = -257.0
+grow_horizontal = 0
+grow_vertical = 2
+text = "Port: "
+horizontal_alignment = 2
+vertical_alignment = 1
+
 [node name="IP Field" type="LineEdit" parent="Lobby Menu/Host Menu"]
-offset_left = 342.0
-offset_top = 50.0
-offset_right = 817.0
-offset_bottom = 81.0
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -186.0
+offset_bottom = 31.0
+grow_horizontal = 0
 placeholder_text = "IP"
 editable = false
 
 [node name="Port Field" type="LineEdit" parent="Lobby Menu/Host Menu"]
-offset_left = 342.0
-offset_top = 80.0
-offset_right = 817.0
-offset_bottom = 111.0
+offset_left = 966.0
+offset_top = 36.0
+offset_right = 1152.0
+offset_bottom = 67.0
 placeholder_text = "Port"
 editable = false
 

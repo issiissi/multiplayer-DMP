@@ -20,7 +20,11 @@ public partial class UIManager : Node
     public VBoxContainer playerInfoContainer;
 
     [Export]
+    public TextureRect bigCharacterPreview;
+
+    [Export]
     public PackedScene playerInfoTemplate;
+
 
 
     //Dictionary with UI for each player
@@ -28,12 +32,13 @@ public partial class UIManager : Node
 
     //Dictionary with Images for Character
     private Dictionary<int, Texture2D> characterImages = new Dictionary<int, Texture2D>();
+    private int currentCharacterIndex = 0;
 
     public override void _Ready()
     {
         //Load images of character
         LoadCharacterImages();
-        
+
         //Display the start menu
         ShowStartMenu();
 
@@ -215,6 +220,40 @@ public partial class UIManager : Node
 
 
     /*************************************************************************
+    Code for Changing own Character
+    **************************************************************************/
+    public void PreviousCharacter()
+    {
+        currentCharacterIndex = (currentCharacterIndex - 1 + characterImages.Count) % characterImages.Count;
+        UpdateBigCharacterPreview(currentCharacterIndex);
+    }
+
+    public void NextsCharacter()
+    {
+        currentCharacterIndex = (currentCharacterIndex + 1) % characterImages.Count;
+        UpdateBigCharacterPreview(currentCharacterIndex);
+    }
+
+    private void UpdateBigCharacterPreview(int characterIndex)
+    {
+        bigCharacterPreview.Texture = characterImages[characterIndex];
+    }
+
+    private void UpdateCharacterOverNetwork(int characterIndex)
+    {
+        if (Multiplayer.IsServer())
+        {
+            //Update for server
+            Lobby.Instance.ClientUpdateCharacter(characterIndex);
+        }
+        else
+        {
+            //Update for clients
+            Lobby.Instance.RpcId(1, nameof(Lobby.ClientUpdateCharacter), characterIndex);
+        }
+    }
+
+    /*************************************************************************
     Code for Adding and Remvoing client info on lobby screen
     **************************************************************************/
     /// <summary>
@@ -225,32 +264,17 @@ public partial class UIManager : Node
         // Create an instance of the template UI element
         Control newPlayerInfoTemplate = playerInfoTemplate.Instantiate<Control>();
 
-
-
-
-        //Load name of the new client
-        //string name = newPlayerInfo["Name"];
-        //newPlayerInfoTemplate.GetNode<LineEdit>("Client Name").Text = name;
-
-        //Load ready state of client
-        // bool ready;
-        //bool.TryParse(Lobby.Instance._players[playerID]["PlayerReady"], out ready);
-        //newPlayerInfoTemplate.GetNode<CheckBox>("Client Ready").SetPressedNoSignal(ready);
-
         //Make checkbox pressable or not based on the ID (only local client can is pressable)
         if (senderID == Multiplayer.GetUniqueId())
         {
             newPlayerInfoTemplate.GetNode<CheckBox>("Client Ready").Disabled = false;
+            //Add signal to press action
             newPlayerInfoTemplate.GetNode<CheckBox>("Client Ready").Toggled += CheckBoxToggled;
         }
         else
         {
             newPlayerInfoTemplate.GetNode<CheckBox>("Client Ready").Disabled = true;
         }
-
-        //Load image of client
-        // int characterIndex = Int32.Parse(newPlayerInfo["CharacterID"]);
-        //newPlayerInfoTemplate.GetNode<TextureRect>("Client Character").Texture = characterImages[characterIndex];
 
         //Store the value in the dictonary
         playersInfoUI.Add(senderID, newPlayerInfoTemplate);
