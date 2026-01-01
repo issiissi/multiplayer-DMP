@@ -1,7 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://biht5sh07rmfo"]
+[gd_scene load_steps=4 format=3 uid="uid://biht5sh07rmfo"]
 
 [ext_resource type="Script" uid="uid://sneckqfb3bf1" path="res://Scripts/Networking/UIManager.cs" id="1_m82sy"]
-[ext_resource type="Script" uid="uid://c3un2lct5gme4" path="res://Scripts/Networking/CharacterSelectV3.cs" id="1_tuf85"]
 [ext_resource type="Script" uid="uid://m761tojwtxsf" path="res://Scripts/Networking/LobbyInfoFeed.cs" id="2_2tj4u"]
 [ext_resource type="PackedScene" uid="uid://ch1vpft72bge5" path="res://Scenes/label_check_box_pair.tscn" id="2_tuf85"]
 
@@ -105,9 +104,6 @@ offset_right = 817.0
 offset_bottom = 285.0
 text = ">"
 
-[node name="Character_Select" type="Node" parent="Lobby Menu"]
-script = ExtResource("1_tuf85")
-
 [node name="Feed" type="RichTextLabel" parent="Lobby Menu"]
 offset_left = 10.0
 offset_top = 483.0
@@ -200,7 +196,7 @@ grow_vertical = 2
 text = "BACK
 "
 
-[node name="UI Manager" type="Node" parent="." node_paths=PackedStringArray("lobbyMenu", "hostMenu", "startMenu", "joinMenu", "startButton", "playerInfoContainer")]
+[node name="UI Manager" type="Node" parent="." node_paths=PackedStringArray("lobbyMenu", "hostMenu", "startMenu", "joinMenu", "startButton", "playerInfoContainer", "bigCharacterPreview")]
 script = ExtResource("1_m82sy")
 lobbyMenu = NodePath("../Lobby Menu")
 hostMenu = NodePath("../Lobby Menu/Host Menu")
@@ -208,10 +204,13 @@ startMenu = NodePath("../Start Menu")
 joinMenu = NodePath("../Join Menu")
 startButton = NodePath("../Lobby Menu/Host Menu/StartGame")
 playerInfoContainer = NodePath("../Lobby Menu/Player Info Container")
+bigCharacterPreview = NodePath("../Lobby Menu/Character_Preview")
 playerInfoTemplate = ExtResource("2_tuf85")
 
 [connection signal="pressed" from="Lobby Menu/Host Menu/StartGame" to="UI Manager" method="StartGame"]
 [connection signal="pressed" from="Lobby Menu/Leave" to="UI Manager" method="ResetToStart"]
+[connection signal="pressed" from="Lobby Menu/Links" to="UI Manager" method="PreviousCharacter"]
+[connection signal="pressed" from="Lobby Menu/Rechts" to="UI Manager" method="NextsCharacter"]
 [connection signal="pressed" from="Start Menu/Host Game" to="UI Manager" method="StartHostingServer"]
 [connection signal="pressed" from="Start Menu/Join Game" to="UI Manager" method="ShowJoinMenu"]
 [connection signal="pressed" from="Join Menu/Join Lobby" to="UI Manager" method="JoinServer"]

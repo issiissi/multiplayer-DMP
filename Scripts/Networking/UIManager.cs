@@ -38,6 +38,7 @@ public partial class UIManager : Node
     {
         //Load images of character
         LoadCharacterImages();
+        UpdateBigCharacterPreview(currentCharacterIndex);
 
         //Display the start menu
         ShowStartMenu();
@@ -60,7 +61,7 @@ public partial class UIManager : Node
         string name = nameField.Text;
 
         Lobby.Instance._playerInfo["Name"] = name;
-        Lobby.Instance._playerInfo["CharacterID"] = "0";
+        Lobby.Instance._playerInfo["CharacterID"] = currentCharacterIndex.ToString();
         Lobby.Instance._playerInfo["PlayerReady"] = "false";
 
         //Try starting a server
@@ -108,7 +109,7 @@ public partial class UIManager : Node
         }
 
         Lobby.Instance._playerInfo["Name"] = name;
-        Lobby.Instance._playerInfo["CharacterID"] = "0";
+        Lobby.Instance._playerInfo["CharacterID"] = currentCharacterIndex.ToString();
         Lobby.Instance._playerInfo["PlayerReady"] = "false";
 
 
@@ -226,12 +227,14 @@ public partial class UIManager : Node
     {
         currentCharacterIndex = (currentCharacterIndex - 1 + characterImages.Count) % characterImages.Count;
         UpdateBigCharacterPreview(currentCharacterIndex);
+        UpdateCharacterOverNetwork(currentCharacterIndex);
     }
 
     public void NextsCharacter()
     {
         currentCharacterIndex = (currentCharacterIndex + 1) % characterImages.Count;
         UpdateBigCharacterPreview(currentCharacterIndex);
+        UpdateCharacterOverNetwork(currentCharacterIndex);
     }
 
     private void UpdateBigCharacterPreview(int characterIndex)
