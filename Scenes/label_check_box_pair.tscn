@@ -1,9 +1,11 @@
-[gd_scene format=3 uid="uid://ch1vpft72bge5"]
+[gd_scene load_steps=2 format=3 uid="uid://ch1vpft72bge5"]
+
+[ext_resource type="Texture2D" uid="uid://ddiosy2vo44pf" path="res://Assets/CharacterPreview/player_cat.png" id="1_kbg8u"]
 
 [node name="Label Check Box Pair" type="HBoxContainer"]
 layout_direction = 2
-offset_right = 232.0
-offset_bottom = 31.0
+offset_right = 267.0
+offset_bottom = 32.0
 
 [node name="Client Name" type="LineEdit" parent="."]
 layout_mode = 2
@@ -15,3 +17,7 @@ expand_to_text_length = true
 [node name="Client Ready" type="CheckBox" parent="."]
 layout_mode = 2
 text = "Ready"
+
+[node name="Client Character" type="TextureRect" parent="."]
+layout_mode = 2
+texture = ExtResource("1_kbg8u")

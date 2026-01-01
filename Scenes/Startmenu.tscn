@@ -71,42 +71,6 @@ offset_right = 817.0
 offset_bottom = 285.0
 text = ">"
 
-[node name="Other_Players" type="VBoxContainer" parent="Lobby Menu"]
-offset_left = 942.0
-offset_top = 155.0
-offset_right = 1142.0
-offset_bottom = 463.0
-
-[node name="Other_Player1" type="HBoxContainer" parent="Lobby Menu/Other_Players"]
-custom_minimum_size = Vector2(200, 100)
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Lobby Menu/Other_Players/Other_Player1"]
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="Lobby Menu/Other_Players/Other_Player1"]
-layout_mode = 2
-
-[node name="Other_Player2" type="HBoxContainer" parent="Lobby Menu/Other_Players"]
-custom_minimum_size = Vector2(200, 100)
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Lobby Menu/Other_Players/Other_Player2"]
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="Lobby Menu/Other_Players/Other_Player2"]
-layout_mode = 2
-
-[node name="Other_Player3" type="HBoxContainer" parent="Lobby Menu/Other_Players"]
-custom_minimum_size = Vector2(200, 100)
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Lobby Menu/Other_Players/Other_Player3"]
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="Lobby Menu/Other_Players/Other_Player3"]
-layout_mode = 2
-
 [node name="Character_Select" type="Node" parent="Lobby Menu"]
 script = ExtResource("1_tuf85")
 
@@ -215,6 +179,6 @@ playerInfoTemplate = ExtResource("2_tuf85")
 [connection signal="pressed" from="Lobby Menu/Host Menu/StartGame" to="UI Manager" method="StartGame"]
 [connection signal="pressed" from="Lobby Menu/Leave" to="UI Manager" method="ResetToStart"]
 [connection signal="pressed" from="Start Menu/Host Game" to="UI Manager" method="StartHostingServer"]
-[connection signal="pressed" from="Start Menu/Join Game" to="UI Manager" method="StartJoiningServer"]
+[connection signal="pressed" from="Start Menu/Join Game" to="UI Manager" method="ShowJoinMenu"]
 [connection signal="pressed" from="Join Menu/Join Lobby" to="UI Manager" method="JoinServer"]
 [connection signal="pressed" from="Join Menu/Back" to="UI Manager" method="ResetToStart"]

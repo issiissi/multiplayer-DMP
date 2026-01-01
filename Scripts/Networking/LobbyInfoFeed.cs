@@ -24,7 +24,7 @@ public partial class LobbyInfoFeed : RichTextLabel
 			OnPlayerConnected((int)entry.Key, entry.Value);
 	}
 
-	private void OnPlayerConnected(int peerId, GDict info)
+	private void OnPlayerConnected(long peerId, GDict info)
     {
         string name = info.ContainsKey("Name") ? info["Name"] : $"Player {peerId}";
         AddLine($"➡️ {name} (ID {peerId}) ist gejoined.");

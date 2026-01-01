@@ -18,35 +18,36 @@ public partial class UIManager : Node
     public Button startButton;
     [Export]
     public VBoxContainer playerInfoContainer;
+
     [Export]
     public PackedScene playerInfoTemplate;
-    private Dictionary<int, Control> playerInfoData = new Dictionary<int, Control>();
 
+
+    //Dictionary with UI for each player
+    private Dictionary<long, Control> playersInfoUI = new Dictionary<long, Control>();
+
+    //Dictionary with Images for Character
+    private Dictionary<int, Texture2D> characterImages = new Dictionary<int, Texture2D>();
 
     public override void _Ready()
     {
-        //Hide all menus except the start menu
-        lobbyMenu.Hide();
-        hostMenu.Hide();
-        joinMenu.Hide();
-        startButton.Hide();
-        startMenu.Show();
+        //Load images of character
+        LoadCharacterImages();
+        
+        //Display the start menu
+        ShowStartMenu();
 
         //Subscribe to server events
         Lobby.Instance.PlayerConnected += AddPlayerInfoToLobbyMenu;
         Lobby.Instance.PlayerDisconnected += RemovePlayerInfoFromLobbyMenu;
-
-        //Lobby.Instance.EnableStartGame += ShowStartButton;
-        //Lobby.Instance.DisableStartGame += HideStartButton;
-
         Lobby.Instance.AllCharactersReady += ChangeVisibilityStartButton;
-
-        Lobby.Instance.GameStarted += GameStarted;
-
-        Lobby.Instance.CharacterReadyChanged += CharacterChangedReady;
+        Lobby.Instance.CharacterReadyChanged += ClientUpdateReady;
+        Lobby.Instance.OnCharacterChoiseChanged += ClientUpdateCharacter;
     }
 
-
+    /*************************************************************************
+    Code for Hosting Server
+    **************************************************************************/
     public void StartHostingServer()
     {
         //Get the name entered in the start menu
@@ -65,13 +66,8 @@ public partial class UIManager : Node
             return;
         }
 
-        //When user starts hosting hide irelevant menus
-        startMenu.Hide();
-        joinMenu.Hide();
-        startButton.Hide();
-        //Show relevant menus
-        lobbyMenu.Show();
-        hostMenu.Show();
+        //Display the Lobby menu in Host view
+        ShowLobbyMenuHost();
 
         //Assign ip address and port to the menu elements
         string serverIp = GetCurrentlyConnectedIPv4(); //Look in Documentation to determen the correct IP of the server in the Array of IPs
@@ -84,20 +80,9 @@ public partial class UIManager : Node
         portField.Text = serverPort;
     }
 
-
-    public void StartJoiningServer()
-    {
-        //Hide menus not relevant for joining a server
-        startMenu.Hide();
-        lobbyMenu.Hide();
-        hostMenu.Hide();
-        startButton.Hide();
-
-        //Show menu relevant for joining
-        joinMenu.Show();
-    }
-
-
+    /*************************************************************************
+    Code for Joining Server
+    **************************************************************************/
     public void JoinServer()
     {
         //Get the IP, port and name from the input fields
@@ -131,20 +116,26 @@ public partial class UIManager : Node
             lobbyMenu.Hide();
         }
 
-        //Hide menus that are no longer relevant
-        joinMenu.Hide();
-        startMenu.Hide();
-        hostMenu.Hide();
-        startButton.Hide();
-
-        //Show relevant menu
-        lobbyMenu.Show();
+        ShowLobbyMenuClient();
     }
 
 
     /*************************************************************************
+    Code for name 
+    **************************************************************************/
+    private void ClientUpdateName(long senderID, string name)
+    {
+        Control playerInfoTemplate = playersInfoUI[senderID];
+        playerInfoTemplate.GetNode<LineEdit>("Client Name").Text = name;
+    }
+
+    /*************************************************************************
     Code for Ready Checkbox
     **************************************************************************/
+
+    /// <summary>
+    /// When own client changes to ready or not ready
+    /// </summary>
     public void CheckBoxToggled(bool ready)
     {
         if (Multiplayer.IsServer())
@@ -160,20 +151,40 @@ public partial class UIManager : Node
     }
 
 
-    public void CharacterChangedReady(long senderID, bool ready)
+    /// <summary>
+    /// Update checkbox UI when other clients update ready over network
+    /// </summary>
+    public void ClientUpdateReady(long senderID, bool ready)
     {
-        if (ready)
-        {
-            SetClientToPressed((int)senderID);
-        }
-        else
-        {
-            SetClientNotPressed((int)senderID);
-        }
+        Control playerInfoTemplate = playersInfoUI[senderID];
+        playerInfoTemplate.GetNode<CheckBox>("Client Ready").SetPressedNoSignal(ready);
     }
 
+
     /*************************************************************************
-    Code for showing start button
+    Code character preview
+    **************************************************************************/
+
+    /// <summary>
+    /// Loads the images for character
+    /// </summary>
+    private void LoadCharacterImages()
+    {
+        characterImages.Add(0, ResourceLoader.Load<Texture2D>("Assets//CharacterPreview//player_cyberpunk.png"));
+        characterImages.Add(1, ResourceLoader.Load<Texture2D>("Assets//CharacterPreview//player_knight.png"));
+        characterImages.Add(2, ResourceLoader.Load<Texture2D>("Assets//CharacterPreview//player_cat.png"));
+    }
+
+
+    private void ClientUpdateCharacter(long senderID, int characterIndex)
+    {
+        Control playerInfoTemplate = playersInfoUI[senderID];
+        playerInfoTemplate.GetNode<TextureRect>("Client Character").Texture = characterImages[characterIndex];
+    }
+
+
+    /*************************************************************************
+    Code for showing Game start button
     **************************************************************************/
     public void ChangeVisibilityStartButton(bool visible)
     {
@@ -203,22 +214,31 @@ public partial class UIManager : Node
     }
 
 
-    public void AddPlayerInfoToLobbyMenu(int playerID, Dictionary<string, string> newPlayerInfo)
+    /*************************************************************************
+    Code for Adding and Remvoing client info on lobby screen
+    **************************************************************************/
+    /// <summary>
+    /// Add new Player to UI when client connects to server
+    /// </summary>
+    public void AddPlayerInfoToLobbyMenu(long senderID, Dictionary<string, string> newPlayerInfo)
     {
         // Create an instance of the template UI element
         Control newPlayerInfoTemplate = playerInfoTemplate.Instantiate<Control>();
 
+
+
+
         //Load name of the new client
-        string name = Lobby.Instance._players[playerID]["Name"];
-        newPlayerInfoTemplate.GetNode<LineEdit>("Client Name").Text = name;
+        //string name = newPlayerInfo["Name"];
+        //newPlayerInfoTemplate.GetNode<LineEdit>("Client Name").Text = name;
 
         //Load ready state of client
-        bool ready;
-        bool.TryParse(Lobby.Instance._players[playerID]["PlayerReady"], out ready);
-        newPlayerInfoTemplate.GetNode<CheckBox>("Client Ready").SetPressedNoSignal(ready);
+        // bool ready;
+        //bool.TryParse(Lobby.Instance._players[playerID]["PlayerReady"], out ready);
+        //newPlayerInfoTemplate.GetNode<CheckBox>("Client Ready").SetPressedNoSignal(ready);
 
-        //Make checkbox pressable or not based on the ID
-        if (playerID == Multiplayer.GetUniqueId())
+        //Make checkbox pressable or not based on the ID (only local client can is pressable)
+        if (senderID == Multiplayer.GetUniqueId())
         {
             newPlayerInfoTemplate.GetNode<CheckBox>("Client Ready").Disabled = false;
             newPlayerInfoTemplate.GetNode<CheckBox>("Client Ready").Toggled += CheckBoxToggled;
@@ -228,57 +248,59 @@ public partial class UIManager : Node
             newPlayerInfoTemplate.GetNode<CheckBox>("Client Ready").Disabled = true;
         }
 
+        //Load image of client
+        // int characterIndex = Int32.Parse(newPlayerInfo["CharacterID"]);
+        //newPlayerInfoTemplate.GetNode<TextureRect>("Client Character").Texture = characterImages[characterIndex];
+
         //Store the value in the dictonary
-        playerInfoData.Add(playerID, newPlayerInfoTemplate);
+        playersInfoUI.Add(senderID, newPlayerInfoTemplate);
 
         // Add to the container (VBoxContainer)
         playerInfoContainer.AddChild(newPlayerInfoTemplate);
-    }
 
+        //Update the name
+        string name = newPlayerInfo["Name"];
+        ClientUpdateName(senderID, name);
+
+        //Update ready state
+        bool ready;
+        bool.TryParse(newPlayerInfo["PlayerReady"], out ready);
+        ClientUpdateReady(senderID, ready);
+
+        //Update character image
+        int characterIndex = Int32.Parse(newPlayerInfo["CharacterID"]);
+        ClientUpdateCharacter(senderID, characterIndex);
+
+        GD.Print($"[UI] Local Client: {Multiplayer.GetUniqueId()} add new client: {senderID} client state: " + newPlayerInfo.ToString());
+    }
 
     public void RemovePlayerInfoFromLobbyMenu(int playerID)
     {
         //Delete the template from the scene
-        playerInfoContainer.RemoveChild(playerInfoData[playerID]);
+        playerInfoContainer.RemoveChild(playersInfoUI[playerID]);
 
         //Remove the player Info data from the dictionary
-        playerInfoData.Remove(playerID);
+        playersInfoUI.Remove(playerID);
     }
 
 
-    public void SetClientToPressed(int playerID)
-    {
-        Control playerInfoTemplate = playerInfoData[playerID];
-        playerInfoTemplate.GetNode<CheckBox>("Client Ready").SetPressedNoSignal(true);
-    }
-
-
-    public void SetClientNotPressed(int playerID)
-    {
-        Control playerInfoTemplate = playerInfoData[playerID];
-        playerInfoTemplate.GetNode<CheckBox>("Client Ready").SetPressedNoSignal(false);
-    }
-
-
-    //Called by a signal from the server
+    /// <summary>
+    /// Set own client to not ready when game start (Temporary)
+    /// </summary>
     public void GameStarted()
     {
-        //Loop over each client and set it to not ready
-        foreach (int key in playerInfoData.Keys)
-        {
-            SetClientNotPressed(key);
-        }
+        CheckBoxToggled(false);
     }
 
 
     public void ResetToStart()
     {
-        foreach (int key in playerInfoData.Keys)
+        foreach (int key in playersInfoUI.Keys)
         {
             RemovePlayerInfoFromLobbyMenu(key);
         }
 
-        playerInfoData.Clear();
+        playersInfoUI.Clear();
 
 
         //When connected to server leave the server
@@ -289,14 +311,68 @@ public partial class UIManager : Node
 
 
         //Show menus in start layout
+        ShowStartMenu();
+    }
+
+
+
+
+
+    /*************************************************************************
+    Code for Showing diffrent UI states
+    **************************************************************************/
+    public void ShowStartMenu()
+    {
+        //Hide menus not relevant for start
         lobbyMenu.Hide();
         hostMenu.Hide();
         joinMenu.Hide();
         startButton.Hide();
+
+        //Show menu relevant for start
         startMenu.Show();
     }
 
+    public void ShowJoinMenu()
+    {
+        //Hide menus not relevant for joining a server
+        startMenu.Hide();
+        lobbyMenu.Hide();
+        hostMenu.Hide();
+        startButton.Hide();
 
+        //Show menu relevant for joining
+        joinMenu.Show();
+    }
+
+    public void ShowLobbyMenuHost()
+    {
+        //hide irelevant menus
+        startMenu.Hide();
+        joinMenu.Hide();
+        startButton.Hide();
+
+        //Show relevant menus
+        lobbyMenu.Show();
+        hostMenu.Show();
+    }
+
+    public void ShowLobbyMenuClient()
+    {
+        //Hide menus that are no longer relevant
+        joinMenu.Hide();
+        startMenu.Hide();
+        hostMenu.Hide();
+        startButton.Hide();
+
+        //Show relevant menu
+        lobbyMenu.Show();
+    }
+
+
+    /*************************************************************************
+    Code for Getting active IPv4 addresse of the network
+    **************************************************************************/
     static string GetCurrentlyConnectedIPv4()
     {
         foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())

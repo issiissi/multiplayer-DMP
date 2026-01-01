@@ -12,7 +12,7 @@ public partial class Lobby : Node
 
     // These signals can be connected to by a UI lobby scene or the game scene.
     [Signal]
-    public delegate void PlayerConnectedEventHandler(int peerId, Dictionary<string, string> playerInfo);
+    public delegate void PlayerConnectedEventHandler(long peerId, Dictionary<string, string> playerInfo);
     [Signal]
     public delegate void PlayerDisconnectedEventHandler(int peerId);
     [Signal]
@@ -70,8 +70,11 @@ public partial class Lobby : Node
     public delegate void SendClientStateEventHandler(int playerID, bool ready);
     [Signal]
     public delegate void ClientRequestStateEventHandler(int playerID, int targetPlayerID);
+
+
     [Signal]
-    public delegate void OnCharacterChoiseChangedEventHandler(int playerID, int characterIndex);
+    public delegate void OnCharacterChoiseChangedEventHandler(long playerID, int characterIndex);
+
     [Signal]
     public delegate void CharacterReadyChangedEventHandler(long playerID, bool ready);
     [Signal]
@@ -183,7 +186,7 @@ public partial class Lobby : Node
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void RegisterPlayer(Dictionary<string, string> newPlayerInfo)
     {
-        int newPlayerId = Multiplayer.GetRemoteSenderId();
+        long newPlayerId = Multiplayer.GetRemoteSenderId();
         _players[newPlayerId] = newPlayerInfo;
         EmitSignal(SignalName.PlayerConnected, newPlayerId, newPlayerInfo);
 

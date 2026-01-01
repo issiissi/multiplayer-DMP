@@ -14,9 +14,6 @@ public partial class CharacterSelectV3 : Node
 	private Button leftButton;
 	private Button rightButton;
 
-	// Other Players
-	private Label[] otherPlayerNames;
-	private TextureRect[] otherPlayerCharacterPreviews;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -29,10 +26,6 @@ public partial class CharacterSelectV3 : Node
 		Get_UI_Nodes();
 
 		Refresh_MyPreview();
-
-		Lobby.Instance.RpcId(1, Lobby.MethodName.ClientUpdateCharacter, myCharacterIndex);
-
-		//Refresh_OtherPreviews();
 	}
 
 	private void Get_Character_Textures()
@@ -48,20 +41,7 @@ public partial class CharacterSelectV3 : Node
 		leftButton = GetNode<Button>("../Links");
 		rightButton = GetNode<Button>("../Rechts");
 
-		otherPlayerNames = new Label[]
-		{
-			GetNode<Label>("../Other_Players/Other_Player1/Label"),
-			GetNode<Label>("../Other_Players/Other_Player2/Label"),
-			GetNode<Label>("../Other_Players/Other_Player3/Label")
-		};
-
-		otherPlayerCharacterPreviews = new TextureRect[]
-		{
-			GetNode<TextureRect>("../Other_Players/Other_Player1/TextureRect"),
-			GetNode<TextureRect>("../Other_Players/Other_Player2/TextureRect"),
-			GetNode<TextureRect>("../Other_Players/Other_Player3/TextureRect")
-		};
-
+		//Add signals to buttons
 		leftButton.Pressed += Left_Button_Down;
 		rightButton.Pressed += Right_Button_Down;
 	}
@@ -90,39 +70,11 @@ public partial class CharacterSelectV3 : Node
 		Refresh_MyPreview();
 
 		SendChoiceToServer();
-
 	}
 
 	private void Refresh_MyPreview()
 	{
 		myCharacterPreview.Texture = characters[myCharacterIndex];
-	}
-
-	private void Refresh_OtherPreviews()
-	{
-		for (int i = 0; i < 3; i++)
-		{
-			otherPlayerNames[i].Text = "";
-			otherPlayerCharacterPreviews[i].Texture = null;
-		}
-
-		int slot = 0;
-
-		foreach (var entry in Lobby.Instance._players)
-		{
-			int id = (int)entry.Key;
-			if (id == myID) continue;
-			if (slot >= 3) break;
-
-			string name = entry.Value["Name"];
-			int index = Lobby.Instance.GetChoiseFor(id);
-			index = Mathf.Clamp(index, 0, characters.Count - 1);
-
-			otherPlayerNames[slot].Text = name;
-			otherPlayerCharacterPreviews[slot].Texture = characters[index];
-
-			slot++;
-		}
 	}
 
 	private void SendChoiceToServer()
@@ -141,10 +93,11 @@ public partial class CharacterSelectV3 : Node
 			Lobby.Instance.ClientUpdateCharacter(myCharacterIndex);
 		}
 		else
-		{	
+		{
 			//Update for clients
 			Lobby.Instance.RpcId(1, nameof(Lobby.ClientUpdateCharacter), myCharacterIndex);
 		}
 
 	}
+
 }
