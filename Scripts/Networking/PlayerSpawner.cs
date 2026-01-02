@@ -2,7 +2,7 @@ using System;
 using Godot;
 using Godot.Collections; // Required for the Array
 //using Godot.Collections.Array;
-public partial class PlayerSpawner2 : MultiplayerSpawner
+public partial class PlayerSpawner : MultiplayerSpawner
 {
     [Export]
     public PackedScene[] playerCharacter;

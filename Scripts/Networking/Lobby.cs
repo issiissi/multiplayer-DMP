@@ -31,7 +31,7 @@ public partial class Lobby : Node
     public PackedScene[] WorldScenes;
 
     [Export]
-    PlayerSpawner2 playerSpawner;
+    PlayerSpawner playerSpawner;
 
     /* 
     This will contain player info for every player that is currently connected to the server
