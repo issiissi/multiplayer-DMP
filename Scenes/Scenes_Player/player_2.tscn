@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://dr1pl4aovgwf1"]
+[gd_scene load_steps=26 format=3 uid="uid://dr1pl4aovgwf1"]
 
 [ext_resource type="Script" uid="uid://c1nt7guo7k40v" path="res://Scripts/Game/Player.cs" id="1_tepif"]
 [ext_resource type="Texture2D" uid="uid://ciphpu317neet" path="res://Assets/Sprites/Knight_player/Idle_KG_1.png" id="2_kdsr1"]
@@ -146,6 +146,8 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_n0kdt"]
 size = Vector2(15, 25)
 
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_tepif"]
+
 [node name="Player2" type="CharacterBody2D"]
 script = ExtResource("1_tepif")
 
@@ -172,3 +174,6 @@ theme_override_fonts/font = ExtResource("5_3vk8h")
 theme_override_font_sizes/font_size = 8
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_tepif")

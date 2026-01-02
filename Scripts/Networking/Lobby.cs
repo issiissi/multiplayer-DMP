@@ -21,11 +21,17 @@ public partial class Lobby : Node
     //Variables for setting up the server
     [Export]
     public int Port = 7000;
-    [Export]
     private string DefaultServerIP = "127.0.0.1"; // IPv4 localhost
     [Export]
     private int MaxConnections = 4;
 
+    [Export]
+    public Node2D mapContainer;
+    [Export]
+    public PackedScene[] WorldScenes;
+
+    [Export]
+    PlayerSpawner2 playerSpawner;
 
     /* 
     This will contain player info for every player that is currently connected to the server
@@ -51,8 +57,6 @@ public partial class Lobby : Node
     Variables that for example only the server keeps track on
     Only Relevant in the Section: Methods for handling any other signals for game logic
     */
-    private Dictionary<long, bool> _playersReady = new Dictionary<long, bool>();
-
 
     // These signals can be connected to by a UI lobby scene or the game scene.
     [Signal]
@@ -61,6 +65,9 @@ public partial class Lobby : Node
     public delegate void ClientChangedReadyEventHandler(long playerID, bool ready);
     [Signal]
     public delegate void AllClientsReadyEventHandler(bool allReady);
+
+    [Signal]
+    public delegate void GameLoadedEventHandler();
 
     // on game started
     public override void _EnterTree()
@@ -73,6 +80,9 @@ public partial class Lobby : Node
         Multiplayer.ServerDisconnected += OnServerDisconnected;
     }
 
+    public override void _Ready()
+    {
+    }
 
     /*-------------------------------------------------------------------------
     Methods for handling creating and joining a Lobby
@@ -117,6 +127,7 @@ public partial class Lobby : Node
         Multiplayer.MultiplayerPeer = peer;
         _players[1] = _playerInfo;
         EmitSignal(SignalName.PlayerConnected, 1, _playerInfo);
+
         return Error.Ok;
     }
 
@@ -205,20 +216,8 @@ public partial class Lobby : Node
     {
         _players.Remove(id);
 
-        if (Multiplayer.IsServer())
-        {
-            _playersReady.Remove(id);
-
-        }
         EmitSignal(SignalName.PlayerDisconnected, id);
 
-        //Leave also when server disconnects
-        //if(id == 1)
-        //{
-        //    RemoveMultiplayerPeer();
-        //}
-        //_characterChoices.Remove(id);
-        // _characterReady.Remove(id);
         //Debug Message
         GD.Print("Client: " + Multiplayer.GetUniqueId() + "\t OnPlayerDisconnected: " + id);
     }
@@ -252,12 +251,28 @@ public partial class Lobby : Node
     /*
     Server call this method on each client when button to start game is pressed
     */
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
-    public void GoToGameScene()
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void GoToGameScene(int selectedMap)
     {
         GD.Print("RPC: Switching to GameScene");
-        GetTree().ChangeSceneToFile("res://Scenes/map.tscn");
+
+        //Load the map
+        Node2D map = WorldScenes[selectedMap].Instantiate<Node2D>(); ;
+        mapContainer.AddChild(map);
+
+        //GetTree().ChangeSceneToFile("res://Scenes/map.tscn");
+        if (Multiplayer.IsServer())
+        {
+            playerSpawner.SpawnPlayers();
+        }
+        // SpawnAllPlayer();
+
+        EmitSignal(SignalName.GameLoaded);
     }
+
+
+
+
 
 
     /// <summary>
@@ -380,6 +395,13 @@ public partial class Lobby : Node
         {
             Rpc(nameof(BroadcastClientUpdate), senderID);
         }
+    }
+
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void BroadcastSpawnClient(long clientID)
+    {
+        // Now this runs all clients and server
 
     }
 

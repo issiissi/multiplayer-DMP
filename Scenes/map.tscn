@@ -1,7 +1,6 @@
 [gd_scene load_steps=14 format=3 uid="uid://bkjbhtw2p3rw8"]
 
 [ext_resource type="Texture2D" uid="uid://bo5qv6s01x1ac" path="res://Assets/Sprites/Nature Platformer Tileset [16x16][FREE] - RottingPixels/nature-paltformer-tileset-16x16.png" id="1_ci6au"]
-[ext_resource type="Script" uid="uid://dn3x5y4k0emgt" path="res://Scripts/Game/PlayerSpawner.cs" id="3_myvm1"]
 [ext_resource type="Texture2D" uid="uid://p76jrj5ifkrh" path="res://Assets/Backgrounds/kona-cyan1.jpg" id="3_p3ir5"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_26yhd"]
@@ -104,6 +103,9 @@ size = Vector2(430, 15)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dlo4w"]
 size = Vector2(398, 14)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_26yhd"]
+size = Vector2(101.18868, 20)
+
 [node name="Map" type="Node2D"]
 
 [node name="TileMap" type="TileMap" parent="."]
@@ -153,16 +155,23 @@ position = Vector2(271, -37.00003)
 scale = Vector2(6.349445, 4.0772223)
 texture = ExtResource("3_p3ir5")
 
-[node name="PlayerSpawner" type="Node" parent="."]
-script = ExtResource("3_myvm1")
-
 [node name="SpawnPoints" type="Node2D" parent="."]
 
 [node name="SpawnPoint_1" type="Marker2D" parent="SpawnPoints"]
-position = Vector2(104, 88)
+position = Vector2(145, -28)
 
 [node name="SpawnPoint_2" type="Marker2D" parent="SpawnPoints"]
-position = Vector2(94, -28)
+position = Vector2(178, -28)
 
 [node name="SpawnPoint_3" type="Marker2D" parent="SpawnPoints"]
-position = Vector2(455, -22)
+position = Vector2(211, -28)
+
+[node name="SpawnPoint_4" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(245, -28)
+
+[node name="StaticBody2D2" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2"]
+position = Vector2(228.00002, 165)
+scale = Vector2(17.175833, 7.0943475)
+shape = SubResource("RectangleShape2D_26yhd")

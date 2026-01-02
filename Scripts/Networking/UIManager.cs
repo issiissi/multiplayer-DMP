@@ -49,6 +49,7 @@ public partial class UIManager : Node
         Lobby.Instance.AllClientsReady += ChangeVisibilityStartButton;
         Lobby.Instance.ClientChangedReady += ClientUpdateReady;
         Lobby.Instance.ClientChangedCharacter += ClientUpdateCharacter;
+        Lobby.Instance.GameLoaded += HideAllUI;
     }
 
     /*************************************************************************
@@ -207,7 +208,7 @@ public partial class UIManager : Node
 
     public void StartGame()
     {
-        Lobby.Instance.Rpc(Lobby.MethodName.GoToGameScene);
+        Lobby.Instance.Rpc(Lobby.MethodName.GoToGameScene, 0);
         GD.Print("HOST: StartGame pressed → switching to GameScene");
 
         startButton.Hide();
@@ -379,6 +380,15 @@ public partial class UIManager : Node
 
         //Show relevant menu
         lobbyMenu.Show();
+    }
+
+    private void HideAllUI()
+    {
+        joinMenu.Hide();
+        startMenu.Hide();
+        hostMenu.Hide();
+        startButton.Hide();
+        lobbyMenu.Hide();
     }
 
 

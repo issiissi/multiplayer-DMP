@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://wrn83sjadp03"]
+[gd_scene load_steps=31 format=3 uid="uid://wrn83sjadp03"]
 
 [ext_resource type="Script" uid="uid://c1nt7guo7k40v" path="res://Scripts/Game/Player.cs" id="1_cvnsp"]
 [ext_resource type="Texture2D" uid="uid://25u8f2cmtuw8" path="res://Assets/Sprites/Spritesheets/Main Character - Male - Full spritesheet - No Guide Gespiegelt.png" id="2_aj013"]
@@ -193,6 +193,8 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gymyn"]
 size = Vector2(19, 26)
 
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_aj013"]
+
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_cvnsp")
 
@@ -219,3 +221,6 @@ theme_override_fonts/font = ExtResource("3_6t5aa")
 theme_override_font_sizes/font_size = 8
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_aj013")

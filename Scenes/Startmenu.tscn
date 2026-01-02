@@ -1,18 +1,43 @@
-[gd_scene load_steps=4 format=3 uid="uid://biht5sh07rmfo"]
+[gd_scene load_steps=10 format=3 uid="uid://biht5sh07rmfo"]
 
 [ext_resource type="Script" uid="uid://sneckqfb3bf1" path="res://Scripts/Networking/UIManager.cs" id="1_m82sy"]
 [ext_resource type="Script" uid="uid://m761tojwtxsf" path="res://Scripts/Networking/LobbyInfoFeed.cs" id="2_2tj4u"]
 [ext_resource type="PackedScene" uid="uid://ch1vpft72bge5" path="res://Scenes/label_check_box_pair.tscn" id="2_tuf85"]
+[ext_resource type="Script" uid="uid://hl0lybeymfjf" path="res://Scripts/Networking/PlayerSpawner2.cs" id="3_01hhp"]
+[ext_resource type="Script" uid="uid://cddws37phn0xh" path="res://Scripts/Networking/Lobby.cs" id="4_bmskx"]
+[ext_resource type="PackedScene" uid="uid://bkjbhtw2p3rw8" path="res://Scenes/map.tscn" id="5_2m3be"]
+[ext_resource type="PackedScene" uid="uid://dr1pl4aovgwf1" path="res://Scenes/Scenes_Player/player_2.tscn" id="5_dorte"]
+[ext_resource type="PackedScene" uid="uid://wrn83sjadp03" path="res://Scenes/Scenes_Player/player.tscn" id="6_2m3be"]
+[ext_resource type="PackedScene" uid="uid://dnruo8qvmrs8" path="res://Scenes/Scenes_Player/player_3.tscn" id="6_6fjf8"]
 
-[node name="Lobby" type="Control"]
+[node name="Lobby" type="Node2D" node_paths=PackedStringArray("mapContainer", "playerSpawner")]
+script = ExtResource("4_bmskx")
+mapContainer = NodePath("MapContainer")
+WorldScenes = Array[PackedScene]([ExtResource("5_2m3be")])
+playerSpawner = NodePath("MultiplayerSpawner")
+
+[node name="MapContainer" type="Node2D" parent="."]
+position = Vector2(537, 285)
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+spawn_path = NodePath("../PlayerContainer")
+script = ExtResource("3_01hhp")
+playerCharacter = Array[PackedScene]([ExtResource("6_2m3be"), ExtResource("5_dorte"), ExtResource("6_6fjf8")])
+
+[node name="PlayerContainer" type="Node2D" parent="."]
+position = Vector2(537, 285)
+
+[node name="Lobby" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
 
-[node name="Lobby Menu" type="CanvasLayer" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="Lobby"]
 
-[node name="Host Menu" type="CanvasLayer" parent="Lobby Menu"]
+[node name="Lobby Menu" type="CanvasLayer" parent="Lobby"]
 
-[node name="Label" type="Label" parent="Lobby Menu/Host Menu"]
+[node name="Host Menu" type="CanvasLayer" parent="Lobby/Lobby Menu"]
+
+[node name="Label" type="Label" parent="Lobby/Lobby Menu/Host Menu"]
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
@@ -28,7 +53,7 @@ text = "IP Address: "
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="Label2" type="Label" parent="Lobby Menu/Host Menu"]
+[node name="Label2" type="Label" parent="Lobby/Lobby Menu/Host Menu"]
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
@@ -44,7 +69,7 @@ text = "Port: "
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="IP Field" type="LineEdit" parent="Lobby Menu/Host Menu"]
+[node name="IP Field" type="LineEdit" parent="Lobby/Lobby Menu/Host Menu"]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -54,7 +79,7 @@ grow_horizontal = 0
 placeholder_text = "IP"
 editable = false
 
-[node name="Port Field" type="LineEdit" parent="Lobby Menu/Host Menu"]
+[node name="Port Field" type="LineEdit" parent="Lobby/Lobby Menu/Host Menu"]
 offset_left = 966.0
 offset_top = 36.0
 offset_right = 1152.0
@@ -62,25 +87,25 @@ offset_bottom = 67.0
 placeholder_text = "Port"
 editable = false
 
-[node name="StartGame" type="Button" parent="Lobby Menu/Host Menu"]
+[node name="StartGame" type="Button" parent="Lobby/Lobby Menu/Host Menu"]
 offset_left = 942.0
 offset_top = 483.0
 offset_right = 1142.0
 offset_bottom = 559.0
 text = "Start Game"
 
-[node name="Leave" type="Button" parent="Lobby Menu"]
+[node name="Leave" type="Button" parent="Lobby/Lobby Menu"]
 offset_left = 942.0
 offset_top = 559.0
 offset_right = 1142.0
 offset_bottom = 635.0
 text = "LEAVE"
 
-[node name="Player Info Container" type="VBoxContainer" parent="Lobby Menu"]
+[node name="Player Info Container" type="VBoxContainer" parent="Lobby/Lobby Menu"]
 offset_right = 385.0
 offset_bottom = 40.0
 
-[node name="Character_Preview" type="TextureRect" parent="Lobby Menu"]
+[node name="Character_Preview" type="TextureRect" parent="Lobby/Lobby Menu"]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -90,38 +115,38 @@ offset_right = 127.0
 offset_bottom = 365.0
 grow_horizontal = 2
 
-[node name="Links" type="Button" parent="Lobby Menu"]
+[node name="Links" type="Button" parent="Lobby/Lobby Menu"]
 offset_left = 342.0
 offset_top = 225.0
 offset_right = 402.0
 offset_bottom = 285.0
 text = "<"
 
-[node name="Rechts" type="Button" parent="Lobby Menu"]
+[node name="Rechts" type="Button" parent="Lobby/Lobby Menu"]
 offset_left = 757.0
 offset_top = 225.0
 offset_right = 817.0
 offset_bottom = 285.0
 text = ">"
 
-[node name="Feed" type="RichTextLabel" parent="Lobby Menu"]
+[node name="Feed" type="RichTextLabel" parent="Lobby/Lobby Menu"]
 offset_left = 10.0
 offset_top = 483.0
 offset_right = 210.0
 offset_bottom = 633.0
 script = ExtResource("2_2tj4u")
 
-[node name="Start Menu" type="CanvasLayer" parent="."]
+[node name="Start Menu" type="CanvasLayer" parent="Lobby"]
 visible = false
 
-[node name="Name Input" type="LineEdit" parent="Start Menu"]
+[node name="Name Input" type="LineEdit" parent="Lobby/Start Menu"]
 offset_left = 342.0
 offset_top = 110.0
 offset_right = 815.0
 offset_bottom = 141.0
 placeholder_text = "Name"
 
-[node name="Host Game" type="Button" parent="Start Menu"]
+[node name="Host Game" type="Button" parent="Lobby/Start Menu"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -136,7 +161,7 @@ grow_vertical = 2
 text = "HOST
 "
 
-[node name="Join Game" type="Button" parent="Start Menu"]
+[node name="Join Game" type="Button" parent="Lobby/Start Menu"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -150,24 +175,24 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "JOIN"
 
-[node name="Join Menu" type="CanvasLayer" parent="."]
+[node name="Join Menu" type="CanvasLayer" parent="Lobby"]
 visible = false
 
-[node name="IP Input" type="LineEdit" parent="Join Menu"]
+[node name="IP Input" type="LineEdit" parent="Lobby/Join Menu"]
 offset_left = 342.0
 offset_top = 141.0
 offset_right = 815.0
 offset_bottom = 172.0
 placeholder_text = "IP"
 
-[node name="Port Input" type="LineEdit" parent="Join Menu"]
+[node name="Port Input" type="LineEdit" parent="Lobby/Join Menu"]
 offset_left = 342.0
 offset_top = 172.0
 offset_right = 815.0
 offset_bottom = 203.0
 placeholder_text = "Port"
 
-[node name="Join Lobby" type="Button" parent="Join Menu"]
+[node name="Join Lobby" type="Button" parent="Lobby/Join Menu"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -181,7 +206,7 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "JOIN"
 
-[node name="Back" type="Button" parent="Join Menu"]
+[node name="Back" type="Button" parent="Lobby/Join Menu"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -196,7 +221,7 @@ grow_vertical = 2
 text = "BACK
 "
 
-[node name="UI Manager" type="Node" parent="." node_paths=PackedStringArray("lobbyMenu", "hostMenu", "startMenu", "joinMenu", "startButton", "playerInfoContainer", "bigCharacterPreview")]
+[node name="UI Manager" type="Node" parent="Lobby" node_paths=PackedStringArray("lobbyMenu", "hostMenu", "startMenu", "joinMenu", "startButton", "playerInfoContainer", "bigCharacterPreview")]
 script = ExtResource("1_m82sy")
 lobbyMenu = NodePath("../Lobby Menu")
 hostMenu = NodePath("../Lobby Menu/Host Menu")
@@ -207,11 +232,11 @@ playerInfoContainer = NodePath("../Lobby Menu/Player Info Container")
 bigCharacterPreview = NodePath("../Lobby Menu/Character_Preview")
 playerInfoTemplate = ExtResource("2_tuf85")
 
-[connection signal="pressed" from="Lobby Menu/Host Menu/StartGame" to="UI Manager" method="StartGame"]
-[connection signal="pressed" from="Lobby Menu/Leave" to="UI Manager" method="LeaveLobby"]
-[connection signal="pressed" from="Lobby Menu/Links" to="UI Manager" method="PreviousCharacter"]
-[connection signal="pressed" from="Lobby Menu/Rechts" to="UI Manager" method="NextsCharacter"]
-[connection signal="pressed" from="Start Menu/Host Game" to="UI Manager" method="StartHostingServer"]
-[connection signal="pressed" from="Start Menu/Join Game" to="UI Manager" method="ShowJoinMenu"]
-[connection signal="pressed" from="Join Menu/Join Lobby" to="UI Manager" method="JoinServer"]
-[connection signal="pressed" from="Join Menu/Back" to="UI Manager" method="LeaveLobby"]
+[connection signal="pressed" from="Lobby/Lobby Menu/Host Menu/StartGame" to="Lobby/UI Manager" method="StartGame"]
+[connection signal="pressed" from="Lobby/Lobby Menu/Leave" to="Lobby/UI Manager" method="LeaveLobby"]
+[connection signal="pressed" from="Lobby/Lobby Menu/Links" to="Lobby/UI Manager" method="PreviousCharacter"]
+[connection signal="pressed" from="Lobby/Lobby Menu/Rechts" to="Lobby/UI Manager" method="NextsCharacter"]
+[connection signal="pressed" from="Lobby/Start Menu/Host Game" to="Lobby/UI Manager" method="StartHostingServer"]
+[connection signal="pressed" from="Lobby/Start Menu/Join Game" to="Lobby/UI Manager" method="ShowJoinMenu"]
+[connection signal="pressed" from="Lobby/Join Menu/Join Lobby" to="Lobby/UI Manager" method="JoinServer"]
+[connection signal="pressed" from="Lobby/Join Menu/Back" to="Lobby/UI Manager" method="LeaveLobby"]

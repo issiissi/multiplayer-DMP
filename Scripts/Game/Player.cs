@@ -9,30 +9,54 @@ public partial class Player : CharacterBody2D
 	private AnimatedSprite2D anim_sprite;
 	private Label nameLabel;
 
-//set playername on spawn
+	//set playername on spawn
 	public string PlayerName = "Unbenannt";
 	public override void _Ready()
 	{
 		anim_sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
 		nameLabel = GetNode<Label>("Name_InGame");
 
-		long id = GetMultiplayerAuthority();
+		// SETUP SYNCHRONIZATION VIA CODE
+		var sync = GetNode<MultiplayerSynchronizer>("MultiplayerSynchronizer");
+		var config = new SceneReplicationConfig();
 
+		// Sync Position: Mode.Always means real-time synchronization
+		NodePath posPath = new NodePath(":position");
+		config.AddProperty(posPath);
+		config.PropertySetReplicationMode(posPath, SceneReplicationConfig.ReplicationMode.Always);
+
+		// Sync Velocity (helps with smooth animation/physics)
+		NodePath velPath = new NodePath(":velocity");
+		config.AddProperty(velPath);
+		config.PropertySetReplicationMode(velPath, SceneReplicationConfig.ReplicationMode.Always);
+
+		sync.ReplicationConfig = config;
+
+		Initialize();
+	}
+
+	public void Initialize()
+	{
+		long id = GetMultiplayerAuthority();
+		GD.Print($"[Player] has multiplayer Authority: {id}");
 		TrySetName(id);
-		
-		Lobby.Instance.PlayerConnected += (peerId, info) =>
-		{
-			if (peerId == id) TrySetName(id);
-		};
+		SetProcessInput(IsMultiplayerAuthority());
 
 		if (!IsMultiplayerAuthority())
-            SetProcessInput(false);
+		{
+			//Remove the camera 
+			Camera2D cam = GetNodeOrNull<Camera2D>("Camera2D");
+			if (cam != null)
+			{
+				cam.QueueFree(); // Remove it safely
+			}
+		}
 	}
 
 	private void TrySetName(long id)
 	{
-		if (Lobby.Instance._players.TryGetValue(id, out var info) && info.ContainsKey("Name"))
-			nameLabel.Text = info["Name"];
+		string name = Lobby.Instance._players[id]["Name"];
+		nameLabel.Text = name;
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -62,7 +86,7 @@ public partial class Player : CharacterBody2D
 		{
 			velocity.X = direction.X * Speed;
 			anim_sprite.FlipH = direction.X < 0;
-			
+
 		}
 		else
 		{
@@ -73,14 +97,14 @@ public partial class Player : CharacterBody2D
 			anim_sprite.Play("jump");
 		}
 		else
-        {
+		{
 			if (direction.X != 0)
-			 	anim_sprite.Play("walk");
+				anim_sprite.Play("walk");
 			else
 				anim_sprite.Play("idle");
-        }
+		}
 
-		
+
 		Velocity = velocity;
 		MoveAndSlide();
 	}
