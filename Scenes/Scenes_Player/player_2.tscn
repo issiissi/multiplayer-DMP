@@ -148,7 +148,7 @@ size = Vector2(15, 25)
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_tepif"]
 
-[node name="Player2" type="CharacterBody2D"]
+[node name="Player2" type="CharacterBody2D" groups=["Players"]]
 script = ExtResource("1_tepif")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]

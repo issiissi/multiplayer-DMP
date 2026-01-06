@@ -11,6 +11,10 @@ public partial class Player : CharacterBody2D
 
 	//set playername on spawn
 	public string PlayerName = "Unbenannt";
+
+	// Respawn System
+	private Vector2 respawn_Point;
+	private bool has_respawn_Point = false;
 	public override void _Ready()
 	{
 		anim_sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
@@ -33,6 +37,9 @@ public partial class Player : CharacterBody2D
 		sync.ReplicationConfig = config;
 
 		Initialize();
+
+		if(!has_respawn_Point)
+			SetRespawnPoint(GlobalPosition, silent: true);
 	}
 
 	public void Initialize()
@@ -57,6 +64,33 @@ public partial class Player : CharacterBody2D
 	{
 		string name = Lobby.Instance._players[id]["Name"];
 		nameLabel.Text = name;
+	}
+
+	public void SetRespawnPoint(Vector2 worldPos, bool silent = false)
+	{
+		respawn_Point = worldPos;
+		has_respawn_Point = true;
+
+		if(!silent)
+			GD.Print($"[Checkpoint] Respawnpoint saved 💾 -> {respawn_Point}");
+	}
+
+	public void Respawn()
+	{
+		if(!has_respawn_Point)
+			SetRespawnPoint(GlobalPosition, silent: true);
+		
+		Rpc(nameof(RpcApplyRespawn), respawn_Point);
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void RpcApplyRespawn(Vector2 worldPos)
+	{
+		Velocity = Vector2.Zero;
+		GlobalPosition = worldPos;
+
+		if(anim_sprite != null)
+			anim_sprite.Play("idle");
 	}
 
 	public override void _PhysicsProcess(double delta)

@@ -198,7 +198,7 @@ size = Vector2(19, 26)
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_cvnsp")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." groups=["Players"]]
 texture_filter = 1
 position = Vector2(-1, -24)
 scale = Vector2(1.5, 1.5)

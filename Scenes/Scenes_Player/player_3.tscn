@@ -78,7 +78,7 @@ size = Vector2(14, 20)
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_hg6pa"]
 
-[node name="Player3" type="CharacterBody2D"]
+[node name="Player3" type="CharacterBody2D" groups=["Players"]]
 script = ExtResource("1_hg6pa")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]

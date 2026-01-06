@@ -25,6 +25,8 @@ public partial class UIManager : Node
     [Export]
     public PackedScene playerInfoTemplate;
 
+    public int selectedMapIndex = 0;
+
 
 
     //Dictionary with UI for each player
@@ -208,7 +210,7 @@ public partial class UIManager : Node
 
     public void StartGame()
     {
-        Lobby.Instance.Rpc(Lobby.MethodName.GoToGameScene, 0);
+        Lobby.Instance.Rpc(Lobby.MethodName.GoToGameScene, selectedMapIndex);
         GD.Print("HOST: StartGame pressed → switching to GameScene");
 
         startButton.Hide();

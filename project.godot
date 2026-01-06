@@ -23,6 +23,10 @@ Lobby="*res://Scripts/Networking/Lobby.cs"
 
 project/assembly_name="NetwrokingTest"
 
+[global_group]
+
+Players=""
+
 [input]
 
 move_left={
