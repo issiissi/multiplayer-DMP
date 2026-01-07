@@ -15,10 +15,20 @@ public partial class Player : CharacterBody2D
 	// Respawn System
 	private Vector2 respawn_Point;
 	private bool has_respawn_Point = false;
+
+	// Klettern
+	[Export] public float ClimbSpeed = 220f;
+	private bool onLadder = false;
+
+	//  Game Over
+	private bool game_Over = false;
+
 	public override void _Ready()
 	{
 		anim_sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
 		nameLabel = GetNode<Label>("Name_InGame");
+
+		AddToGroup("Players");
 
 		// SETUP SYNCHRONIZATION VIA CODE
 		var sync = GetNode<MultiplayerSynchronizer>("MultiplayerSynchronizer");
@@ -93,29 +103,65 @@ public partial class Player : CharacterBody2D
 			anim_sprite.Play("idle");
 	}
 
+	public void SetOnLadder(bool on)
+	{
+		onLadder = on;
+		GD.Print($"[Player] onLadder = {onLadder}");
+
+		if (on)
+			Velocity = new Vector2(Velocity.X, 0);
+	}
+
+	public void SetGameOver(bool over)
+	{
+		game_Over = over;
+		if(over)
+		{
+			Velocity = Vector2.Zero;
+			anim_sprite?.Play("idle");
+		}
+	}
 	public override void _PhysicsProcess(double delta)
 	{
 		if (!IsMultiplayerAuthority())
 			return;
+		
+		if(game_Over)
+			return;
 
 		Vector2 velocity = Velocity;
-
-		// Add the gravity.
-		if (!IsOnFloor())
-		{
-			velocity += GetGravity() * (float)delta;
-		}
-
-		// Handle Jump.
-		if (Input.IsActionJustPressed("jump") && IsOnFloor())
-		{
-			velocity.Y = JumpVelocity;
-			anim_sprite.Play("jump");
-		}
-
-		// Get the input direction and handle the movement/deceleration.
-		// As good practice, you should replace UI actions with custom gameplay actions.
 		Vector2 direction = Input.GetVector("move_left", "move_right", "move_up", "move_down");
+
+		if (onLadder)
+		{
+			velocity.Y = direction.Y * ClimbSpeed;
+
+			if(Mathf.Abs(direction.Y) < 0.01f)
+				velocity.Y = 0;
+			
+			if(Input.IsActionJustPressed("jump"))
+			{
+				onLadder = false;
+				velocity.Y = JumpVelocity;
+			}
+		}
+
+		else
+		{
+			// Add the gravity.
+			if (!IsOnFloor())
+			{
+				velocity += GetGravity() * (float)delta;
+			}
+
+			// Handle Jump.
+			if (Input.IsActionJustPressed("jump") && IsOnFloor())
+			{
+				velocity.Y = JumpVelocity;
+				anim_sprite.Play("jump");
+			}
+		}
+
 		if (direction != Vector2.Zero)
 		{
 			velocity.X = direction.X * Speed;

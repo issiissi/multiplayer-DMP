@@ -121,10 +121,9 @@ public partial class UIManager : Node
         if (error != Error.Ok)
         {
             GD.Print("Joining Server Failed");
-            GD.Print("Joined Server");
             lobbyMenu.Hide();
         }
-
+        GD.Print("Joined Server");
         ShowLobbyMenuClient();
     }
 

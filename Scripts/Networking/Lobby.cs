@@ -228,19 +228,21 @@ public partial class Lobby : Node
     */
     private void OnServerDisconnected()
     {
+        int myID = (Multiplayer.MultiplayerPeer != null) ? Multiplayer.GetUniqueId() : 1;
+        // Debug Message
+        GD.Print($"Client: {myID}\t OnServerDisconnected");
+
         Multiplayer.MultiplayerPeer = null;
         _players.Clear();
         EmitSignal(SignalName.ServerDisconnected);
-
-        //Debug Message
-        GD.Print("Client: " + Multiplayer.GetUniqueId() + "\t OnServerDisconnected");
     }
 
     private void OnConnectionFail()
     {
-        Multiplayer.MultiplayerPeer = null;
+        int myID = (Multiplayer.MultiplayerPeer != null) ? Multiplayer.GetUniqueId() : 1;
+        GD.Print($"Client: {myID}\t OnConnectionFail");
 
-        GD.Print("Client: " + Multiplayer.GetUniqueId() + "\t OnConnectionFail");
+        Multiplayer.MultiplayerPeer = null;
     }
 
 
@@ -255,6 +257,8 @@ public partial class Lobby : Node
     public void GoToGameScene(int selectedMap)
     {
         GD.Print("RPC: Switching to GameScene");
+        GD.Print($"[GoToGameScene] localId={(Multiplayer.MultiplayerPeer != null ? Multiplayer.GetUniqueId() : -1)} peer={(Multiplayer.MultiplayerPeer != null)} isServer={Multiplayer.IsServer()}");
+
 
         //Load the map
         Node2D map = WorldScenes[selectedMap].Instantiate<Node2D>(); ;
