@@ -12,6 +12,7 @@
 
 [node name="Lobby" type="Node2D" node_paths=PackedStringArray("mapContainer", "playerSpawner")]
 script = ExtResource("4_bmskx")
+MaxConnections = 2
 mapContainer = NodePath("MapContainer")
 WorldScenes = Array[PackedScene]([ExtResource("2_dorte")])
 playerSpawner = NodePath("MultiplayerSpawner")
