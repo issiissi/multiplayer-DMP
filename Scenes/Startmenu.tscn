@@ -173,6 +173,17 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "JOIN"
 
+[node name="UI Manager" type="Node" parent="Lobby" node_paths=PackedStringArray("lobbyMenu", "hostMenu", "startMenu", "joinMenu", "startButton", "playerInfoContainer", "bigCharacterPreview")]
+script = ExtResource("1_m82sy")
+lobbyMenu = NodePath("../Lobby Menu")
+hostMenu = NodePath("../Lobby Menu/Host Menu")
+startMenu = NodePath("../Start Menu")
+joinMenu = NodePath("../Join Menu")
+startButton = NodePath("../Lobby Menu/Host Menu/StartGame")
+playerInfoContainer = NodePath("../Lobby Menu/Player Info Container")
+bigCharacterPreview = NodePath("../Lobby Menu/Character_Preview")
+playerInfoTemplate = ExtResource("2_tuf85")
+
 [node name="Join Menu" type="CanvasLayer" parent="Lobby"]
 visible = false
 
@@ -218,17 +229,6 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "BACK
 "
-
-[node name="UI Manager" type="Node" parent="Lobby" node_paths=PackedStringArray("lobbyMenu", "hostMenu", "startMenu", "joinMenu", "startButton", "playerInfoContainer", "bigCharacterPreview")]
-script = ExtResource("1_m82sy")
-lobbyMenu = NodePath("../Lobby Menu")
-hostMenu = NodePath("../Lobby Menu/Host Menu")
-startMenu = NodePath("../Start Menu")
-joinMenu = NodePath("../Join Menu")
-startButton = NodePath("../Lobby Menu/Host Menu/StartGame")
-playerInfoContainer = NodePath("../Lobby Menu/Player Info Container")
-bigCharacterPreview = NodePath("../Lobby Menu/Character_Preview")
-playerInfoTemplate = ExtResource("2_tuf85")
 
 [connection signal="pressed" from="Lobby/Lobby Menu/Host Menu/StartGame" to="Lobby/UI Manager" method="StartGame"]
 [connection signal="pressed" from="Lobby/Lobby Menu/Leave" to="Lobby/UI Manager" method="LeaveLobby"]

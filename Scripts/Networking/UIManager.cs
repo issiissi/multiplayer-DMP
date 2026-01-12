@@ -52,6 +52,7 @@ public partial class UIManager : Node
         Lobby.Instance.ClientChangedReady += ClientUpdateReady;
         Lobby.Instance.ClientChangedCharacter += ClientUpdateCharacter;
         Lobby.Instance.GameLoaded += HideAllUI;
+        Lobby.Instance.ServerDisconnected += OnServerDisconnectedUI;
     }
 
     /*************************************************************************
@@ -309,9 +310,10 @@ public partial class UIManager : Node
 
     public void LeaveLobby()
     {
-        foreach (int key in playersInfoUI.Keys)
+        var keysCopy = new System.Collections.Generic.List<long>(playersInfoUI.Keys);
+        foreach (long key in keysCopy)
         {
-            RemovePlayerInfoFromLobbyMenu(key);
+            RemovePlayerInfoFromLobbyMenu((int)key);
         }
 
         playersInfoUI.Clear();
@@ -371,7 +373,7 @@ public partial class UIManager : Node
         hostMenu.Show();
     }
 
-    private void ShowLobbyMenuClient()
+    public void ShowLobbyMenuClient()
     {
         //Hide menus that are no longer relevant
         joinMenu.Hide();
@@ -381,6 +383,14 @@ public partial class UIManager : Node
 
         //Show relevant menu
         lobbyMenu.Show();
+    }
+
+    public void ShowLobbyMenuAfterGame()
+    {
+        if(Multiplayer.IsServer())
+            ShowLobbyMenuHost();
+        else
+            ShowLobbyMenuClient();
     }
 
     private void HideAllUI()
@@ -421,6 +431,12 @@ public partial class UIManager : Node
             }
         }
         return null;
+    }
+
+    private void OnServerDisconnectedUI()
+    {
+        Lobby.Instance.ClearGameWorldLocal();
+        LeaveLobby();
     }
 }
 

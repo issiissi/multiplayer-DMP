@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using Godot;
 using Godot.Collections; //Important to not Confuse with c# System.Collections.Generic
 
@@ -32,6 +33,20 @@ public partial class Lobby : Node
 
     [Export]
     PlayerSpawner playerSpawner;
+
+    [Signal] public delegate void PlayAgainProgressEventHandler(int pressed, int total, float secondsLeft);
+    [Signal] public delegate void PlayAgainExpiredEventHandler();
+    [Signal] public delegate void GameRestartedEventHandler();
+
+    [Export] public float PlayAgainWindowSeconds = 15f;
+
+    private System.Collections.Generic.HashSet<long> playAgainPressed = new();
+    private bool playAgainWindowOpen = false;
+    private ulong playAgainStartMsec = 0;
+    private int playAgainToken = 0;
+    [Export] public float playAgainProgressInterval = 0.25f;
+    private float playAgainProgressAcc = 0f;
+
 
     /* 
     This will contain player info for every player that is currently connected to the server
@@ -218,6 +233,10 @@ public partial class Lobby : Node
 
         EmitSignal(SignalName.PlayerDisconnected, id);
 
+        playAgainPressed.Remove(id);
+        if (_players.Count > 0 && playAgainPressed.Count > _players.Count)
+            RestartGameServer();
+
         //Debug Message
         GD.Print("Client: " + Multiplayer.GetUniqueId() + "\t OnPlayerDisconnected: " + id);
     }
@@ -274,6 +293,37 @@ public partial class Lobby : Node
         EmitSignal(SignalName.GameLoaded);
     }
 
+    public void ReturnToLobby()
+    {
+        GD.Print("[Lobby] ReturnToLobby RPC received");
+
+        if (mapContainer != null)
+        {
+            foreach (Node child in mapContainer.GetChildren())
+                child.QueueFree();
+        }
+
+        var playerContainer = GetNodeOrNull<Node>("/root/Lobby/PlayerContainer");
+        if (playerContainer != null)
+        {
+            foreach (Node child in playerContainer.GetChildren())
+                child.QueueFree();
+        }
+
+        foreach (long id in _players.Keys)
+        {   
+            _players[id]["PlayerReady"] = "false";
+        }
+
+        foreach (long id in _players.Keys)
+            EmitSignal(SignalName.ClientChangedReady, id, false);
+
+        if (Multiplayer.IsServer())
+            EmitSignal(SignalName.AllClientsReady, false);
+
+        var ui = GetNodeOrNull<UIManager>("/root/Lobby/UI Manager");
+        ui.ShowLobbyMenuAfterGame();
+    }
 
 
 
@@ -426,4 +476,147 @@ public partial class Lobby : Node
         return Int32.Parse(characterString);
 
     }
+
+    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void RequestPlayAgain()
+    {
+        if(!Multiplayer.IsServer())
+            return;
+        
+        long senderID = Multiplayer.GetRemoteSenderId();
+        if (senderID == 0)
+            senderID = Multiplayer.GetUniqueId();
+        
+        StartOrUpdatePlayAgainWindow(senderID);
+    }
+
+    private void StartOrUpdatePlayAgainWindow(long senderID)
+    {
+        if(!playAgainWindowOpen)
+        {
+            playAgainWindowOpen = true;
+            playAgainPressed.Clear();
+
+            playAgainStartMsec = Time.GetTicksMsec();
+            playAgainToken++;
+            int token = playAgainToken;
+
+            GetTree().CreateTimer(PlayAgainWindowSeconds).Timeout += () => OnPlayAgainTimeout(token);
+        }
+
+        playAgainPressed.Add(senderID);
+
+        playAgainProgressAcc = 0f;
+        BroadCastPlayAgainProgressServer();
+
+        if(_players.Count > 0 && playAgainPressed.Count >= _players.Count)
+            RestartGameServer();
+    }
+
+    private void BroadCastPlayAgainProgressServer()
+    {
+        float elapsed = (Time.GetTicksMsec() - playAgainStartMsec) / 1000f;
+        float left = Mathf.Max(0, PlayAgainWindowSeconds - elapsed);
+
+        Rpc(nameof(RpcPlayAgainProgress), playAgainPressed.Count, _players.Count, left);
+    }
+
+    private void OnPlayAgainTimeout(int token)
+    {
+        if(!Multiplayer.IsServer())
+            return;
+        if(token != playAgainToken)
+            return;
+        if(!playAgainWindowOpen)
+            return;
+        if(_players.Count > 0 && playAgainPressed.Count >= _players.Count)
+            return;
+        
+        playAgainWindowOpen = false;
+        playAgainPressed.Clear();
+        playAgainProgressAcc = 0f;
+
+        Rpc(nameof(RpcPlayAgainExpired));
+    }
+
+    private void RestartGameServer()
+    {
+        playAgainWindowOpen = false;
+        playAgainPressed.Clear();
+        playAgainProgressAcc = 0f;
+
+        Rpc(nameof(RpcPlayAgainNow));
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void RpcPlayAgainProgress(int pressed, int total, float secondsLeft)
+    {
+        EmitSignal(SignalName.PlayAgainProgress, pressed, total, secondsLeft);
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void RpcPlayAgainExpired()
+    {
+        EmitSignal(SignalName.PlayAgainExpired);
+    }
+
+    [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void RpcPlayAgainNow()
+    {
+
+        GD.Print($"[Lobby] RpcPlayAgainNow: server={Multiplayer.IsServer()} GMs={GetTree().GetNodesInGroup("GameManagers").Count}");
+
+        EmitSignal(SignalName.GameRestarted);
+
+        var gms = GetTree().GetNodesInGroup("GameManagers");
+        var pls = GetTree().GetNodesInGroup("Players");
+
+        GD.Print($"[Lobby] RpcPlayAgainNow: server={Multiplayer.IsServer()} GMs={gms.Count} Players={pls.Count}");
+
+        foreach (Node gm in gms)
+            GD.Print($"[Lobby] GM in group: {gm.GetPath()}");
+
+        // --- 1) GameManager reset (game_Over=false + UI weg) ---
+        GetTree().CallGroup("GameManagers", "PlayAgainRoundLocal");
+
+        // --- 2) Player reset (jeder Owner setzt sich auf Spawn) ---
+        GetTree().CallGroup("Players", "PlayAgainNewRound");
+    }
+
+    public void ClearGameWorldLocal()
+    {
+        if(mapContainer != null)
+        {
+            foreach(Node child in mapContainer.GetChildren())
+                child.QueueFree();
+        }
+
+        if(playerSpawner != null)
+        {
+            Node parent = playerSpawner.GetNodeOrNull<Node>(playerSpawner.SpawnPath);
+            if(parent != null)
+            {
+                foreach(Node child in parent.GetChildren())
+                    child.QueueFree();
+            }
+        }
+    }
+
+    public override void _Process(double delta)
+    {
+        if(Multiplayer.MultiplayerPeer == null)
+            return;
+        if(!Multiplayer.IsServer())
+            return;
+        if(!playAgainWindowOpen)
+            return;
+        
+        playAgainProgressAcc += (float)delta;
+        if(playAgainProgressAcc < playAgainProgressInterval)
+            return;
+
+        playAgainProgressAcc = 0f;
+        BroadCastPlayAgainProgressServer();
+    }
+
 }

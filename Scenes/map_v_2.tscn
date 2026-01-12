@@ -147,7 +147,7 @@ size = Vector2(14, 255)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_n27qp"]
 size = Vector2(17, 1037)
 
-[node name="mapV2" type="Node2D"]
+[node name="mapV2" type="Node2D" groups=["GameManagers"]]
 script = ExtResource("1_u1rif")
 ResultsUIPath = NodePath("ScoreUI")
 
@@ -397,6 +397,8 @@ position = Vector2(3776, -25)
 
 [node name="ScoreUI" type="CanvasLayer" parent="."]
 script = ExtResource("7_v11jc")
+PlayAgainButtonPath = NodePath("PanelContainer/MarginContainer/CenterContainer/VBoxContainer/PlayAgain")
+LeaveButtonPath = NodePath("PanelContainer/MarginContainer/CenterContainer/VBoxContainer/Leave")
 
 [node name="PanelContainer" type="PanelContainer" parent="ScoreUI"]
 offset_right = 40.0
@@ -405,8 +407,23 @@ offset_bottom = 40.0
 [node name="MarginContainer" type="MarginContainer" parent="ScoreUI/PanelContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="ScoreUI/PanelContainer/MarginContainer"]
+[node name="CenterContainer" type="CenterContainer" parent="ScoreUI/PanelContainer/MarginContainer"]
 layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScoreUI/PanelContainer/MarginContainer/CenterContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ScoreUI/PanelContainer/MarginContainer/CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="PlayAgain" type="Button" parent="ScoreUI/PanelContainer/MarginContainer/CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Play Again"
+
+[node name="Leave" type="Button" parent="ScoreUI/PanelContainer/MarginContainer/CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Leave
+"
 
 [connection signal="body_entered" from="DeathZone" to="DeathZone" method="_on_body_entered"]
 [connection signal="body_entered" from="CheckPoint_1" to="DeathZone" method="_on_checkpoint_body_entered"]
@@ -414,3 +431,5 @@ layout_mode = 2
 [connection signal="body_entered" from="Leiter" to="DeathZone" method="_on_leiter_body_entered"]
 [connection signal="body_exited" from="Leiter" to="DeathZone" method="_on_leiter_body_exited"]
 [connection signal="body_entered" from="Finish" to="DeathZone" method="_on_area_2d_body_entered"]
+[connection signal="pressed" from="ScoreUI/PanelContainer/MarginContainer/CenterContainer/VBoxContainer/PlayAgain" to="." method="_on_play_again_pressed"]
+[connection signal="pressed" from="ScoreUI/PanelContainer/MarginContainer/CenterContainer/VBoxContainer/Leave" to="." method="_on_leave_pressed"]

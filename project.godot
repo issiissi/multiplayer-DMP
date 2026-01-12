@@ -26,6 +26,7 @@ project/assembly_name="NetwrokingTest"
 [global_group]
 
 Players=""
+GameManagers=""
 
 [input]
 

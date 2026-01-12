@@ -23,6 +23,9 @@ public partial class Player : CharacterBody2D
 	//  Game Over
 	private bool game_Over = false;
 
+	private Vector2 spawn_Point;
+	private bool has_Spawn_Point = false;
+
 	public override void _Ready()
 	{
 		anim_sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
@@ -43,6 +46,15 @@ public partial class Player : CharacterBody2D
 		NodePath velPath = new NodePath(":velocity");
 		config.AddProperty(velPath);
 		config.PropertySetReplicationMode(velPath, SceneReplicationConfig.ReplicationMode.Always);
+
+		if(!has_Spawn_Point)
+		{
+			spawn_Point = GlobalPosition;
+			has_Spawn_Point = true;
+		}
+
+		if(!has_respawn_Point)
+			SetRespawnPoint(spawn_Point, silent: true);
 
 		sync.ReplicationConfig = config;
 
@@ -120,6 +132,27 @@ public partial class Player : CharacterBody2D
 			Velocity = Vector2.Zero;
 			anim_sprite?.Play("idle");
 		}
+	}
+
+	public void PlayAgainNewRound()
+	{
+		if(!IsMultiplayerAuthority())
+			return;
+		SetGameOver(false);
+
+		onLadder = false;
+		Velocity = Vector2.Zero;
+
+		if(!has_Spawn_Point)
+		{
+			spawn_Point = GlobalPosition;
+			has_Spawn_Point = true;
+		}
+
+		GlobalPosition = spawn_Point;
+		SetRespawnPoint(spawn_Point, silent: true);
+
+		anim_sprite.Play("idle");
 	}
 	public override void _PhysicsProcess(double delta)
 	{

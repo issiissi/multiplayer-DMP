@@ -18,6 +18,7 @@ public partial class GameManager : Node2D
     }
 	public override void _Ready()
 	{
+		AddToGroup("GameManagers");
 		resultsUI = GetNode<ScoreUi>(ResultsUIPath);
 	}
 
@@ -26,7 +27,10 @@ public partial class GameManager : Node2D
 		if (!Multiplayer.IsServer())
 			return;
 		if(game_Over)
+		{
+			GD.Print("[GameManager] Finish ignored -> game_Over is still TRUE");
 			return;
+		}
 		
 		game_Over = true;
 
@@ -68,5 +72,15 @@ public partial class GameManager : Node2D
 		GetTree().CallGroup("Players", "SetGameOver", true);
 
 		resultsUI.show_Results(resultsText);
+	}
+
+	public void PlayAgainRoundLocal()
+	{
+		GD.Print($"[GameManager] PlayAgainRoundLocal CALLED (server={Multiplayer.IsServer()}) -> game_Over=false");
+
+		GD.Print($"[GameManager] PlayAgainRoundLocal called (server={Multiplayer.IsServer()}) -> resetting game_Over");
+		game_Over = false;
+
+		resultsUI.HideResults();
 	}
 }
