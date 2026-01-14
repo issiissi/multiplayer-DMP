@@ -27,6 +27,7 @@ project/assembly_name="NetwrokingTest"
 
 Players=""
 GameManagers=""
+LifePoints=""
 
 [input]
 

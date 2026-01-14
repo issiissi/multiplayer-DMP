@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://p76jrj5ifkrh"
-path="res://.godot/imported/kona-cyan1.jpg-3c5de8be8aaac20d5afeefdd57252d68.ctex"
+uid="uid://c07cgjktba0cj"
+path="res://.godot/imported/hearts_hud.png-9f985e9197011e9cabf630cb75f7dc06.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Backgrounds/kona-cyan1.jpg"
-dest_files=["res://.godot/imported/kona-cyan1.jpg-3c5de8be8aaac20d5afeefdd57252d68.ctex"]
+source_file="res://Assets/Hearts/hearts_hud.png"
+dest_files=["res://.godot/imported/hearts_hud.png-9f985e9197011e9cabf630cb75f7dc06.ctex"]
 
 [params]
 

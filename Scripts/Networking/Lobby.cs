@@ -47,6 +47,9 @@ public partial class Lobby : Node
     [Export] public float playAgainProgressInterval = 0.25f;
     private float playAgainProgressAcc = 0f;
 
+    [Export] public PackedScene LifePointsScene;
+    private LifePoints lifePointsUI;
+
 
     /* 
     This will contain player info for every player that is currently connected to the server
@@ -283,6 +286,9 @@ public partial class Lobby : Node
         Node2D map = WorldScenes[selectedMap].Instantiate<Node2D>(); ;
         mapContainer.AddChild(map);
 
+        EnsureLifePointsUI();
+        lifePointsUI.Visible = true;
+
         //GetTree().ChangeSceneToFile("res://Scenes/map.tscn");
         if (Multiplayer.IsServer())
         {
@@ -296,6 +302,9 @@ public partial class Lobby : Node
     public void ReturnToLobby()
     {
         GD.Print("[Lobby] ReturnToLobby RPC received");
+
+        if(lifePointsUI != null && GodotObject.IsInstanceValid(lifePointsUI))
+            lifePointsUI.Visible = false;
 
         if (mapContainer != null)
         {
@@ -617,6 +626,21 @@ public partial class Lobby : Node
 
         playAgainProgressAcc = 0f;
         BroadCastPlayAgainProgressServer();
+    }
+
+    private void EnsureLifePointsUI()
+    {
+        if(lifePointsUI != null && GodotObject.IsInstanceValid(lifePointsUI))
+            return;
+        if(LifePointsScene == null)
+        {
+            GD.PushError("[Lobby] LifePointsScene ist nicht im Inspector gesetzt!");
+            return;
+        }
+
+        lifePointsUI = LifePointsScene.Instantiate<LifePoints>();
+
+        AddChild(lifePointsUI);
     }
 
 }

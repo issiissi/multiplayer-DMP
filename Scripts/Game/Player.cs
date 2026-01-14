@@ -20,6 +20,9 @@ public partial class Player : CharacterBody2D
 	[Export] public float ClimbSpeed = 220f;
 	private bool onLadder = false;
 
+	// Life Mechanic
+	private bool eliminated = false;
+
 	//  Game Over
 	private bool game_Over = false;
 
@@ -115,6 +118,32 @@ public partial class Player : CharacterBody2D
 			anim_sprite.Play("idle");
 	}
 
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	public void RpcClientRespawn()
+	{
+		if(!Multiplayer.IsServer() && Multiplayer.GetRemoteSenderId() != 1)
+			return;
+		if(!IsMultiplayerAuthority())
+			return;
+		
+		Respawn();
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	public void RpcClientSetEliminated(bool value)
+	{
+		if(!Multiplayer.IsServer() && Multiplayer.GetRemoteSenderId() != 1)
+			return;
+		
+		eliminated = value;
+
+		if(eliminated)
+		{
+			Velocity = Vector2.Zero;
+			anim_sprite.Play("idle");
+		}
+	}
+
 	public void SetOnLadder(bool on)
 	{
 		onLadder = on;
@@ -136,6 +165,10 @@ public partial class Player : CharacterBody2D
 
 	public void PlayAgainNewRound()
 	{
+		eliminated = false;
+		game_Over = false;
+		onLadder = false;
+
 		if(!IsMultiplayerAuthority())
 			return;
 		SetGameOver(false);
@@ -158,10 +191,11 @@ public partial class Player : CharacterBody2D
 	{
 		if (!IsMultiplayerAuthority())
 			return;
-		
 		if(game_Over)
 			return;
-
+		if(eliminated)
+			return;
+		
 		Vector2 velocity = Velocity;
 		Vector2 direction = Input.GetVector("move_left", "move_right", "move_up", "move_down");
 

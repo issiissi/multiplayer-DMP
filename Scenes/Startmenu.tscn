@@ -1,9 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://biht5sh07rmfo"]
+[gd_scene load_steps=11 format=3 uid="uid://biht5sh07rmfo"]
 
 [ext_resource type="Script" uid="uid://sneckqfb3bf1" path="res://Scripts/Networking/UIManager.cs" id="1_m82sy"]
 [ext_resource type="Script" uid="uid://m761tojwtxsf" path="res://Scripts/Networking/LobbyInfoFeed.cs" id="2_2tj4u"]
 [ext_resource type="PackedScene" uid="uid://cx4b8iydaxnsq" path="res://Scenes/map_v_2.tscn" id="2_dorte"]
 [ext_resource type="PackedScene" uid="uid://ch1vpft72bge5" path="res://Scenes/label_check_box_pair.tscn" id="2_tuf85"]
+[ext_resource type="PackedScene" uid="uid://bgmnhitiql31a" path="res://Scenes/life_points.tscn" id="3_6fjf8"]
 [ext_resource type="Script" uid="uid://hl0lybeymfjf" path="res://Scripts/Networking/PlayerSpawner.cs" id="3_dorte"]
 [ext_resource type="Script" uid="uid://cddws37phn0xh" path="res://Scripts/Networking/Lobby.cs" id="4_bmskx"]
 [ext_resource type="PackedScene" uid="uid://dr1pl4aovgwf1" path="res://Scenes/Scenes_Player/player_2.tscn" id="5_dorte"]
@@ -16,6 +17,7 @@ MaxConnections = 2
 mapContainer = NodePath("MapContainer")
 WorldScenes = Array[PackedScene]([ExtResource("2_dorte")])
 playerSpawner = NodePath("MultiplayerSpawner")
+LifePointsScene = ExtResource("3_6fjf8")
 
 [node name="MapContainer" type="Node2D" parent="."]
 position = Vector2(537, 285)

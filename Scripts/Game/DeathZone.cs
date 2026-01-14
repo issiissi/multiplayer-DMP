@@ -1,22 +1,40 @@
 using Godot;
 using System;
+using System.ComponentModel;
 
 public partial class DeathZone : Area2D
 {
+	[Export] public NodePath GameManagerPath;
+
+	private GameManager gameManager;
 	public override void _Ready()
 	{
-		GD.Print("[DeathZone] _Ready ✅ Monitoring=" + Monitoring);
+		gameManager = GetNode<GameManager>(GameManagerPath);
+		if(gameManager == null)
+		{
+			GD.PrintErr("[DeathZone] GameManager node not found!");
+		}
+
 		BodyEntered += on_body_entered;
 	}
 
 	public void on_body_entered(Node2D body)
 	{
-		GD.Print($"[DeathZone] body_entered: {body.Name} ({body.GetType().Name})");
+		var player = body as Player ?? body.GetParentOrNull<Player>();
+		if(player == null)
+			return;
+		if(!player.IsMultiplayerAuthority())
+			return;
 
-		if (body is Player player && player.IsMultiplayerAuthority())
-		{
-			GD.Print($"[DeathZone] -> resolved Player: {player.Name} | authId={player.GetMultiplayerAuthority()} | localIsAuth={player.IsMultiplayerAuthority()}");
-			player.Respawn();
-		}
+		long peerID = player.GetMultiplayerAuthority();
+		GD.Print($"[DeathZone] Fall reported by owner. peerID={peerID} server={Multiplayer.IsServer()}");
+
+		if (gameManager == null)
+			return;
+		
+		if(Multiplayer.IsServer())
+			gameManager.ServerRegisterFall(peerID);
+		else
+			gameManager.RpcId(1, nameof(GameManager.ClientReportFall), peerID);
 	}
 }

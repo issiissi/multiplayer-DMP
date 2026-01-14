@@ -39,6 +39,9 @@ public partial class Finish : Area2D
 		float zielX = ziel != null ? ziel.GlobalPosition.X : GlobalPosition.X;
 		long winnerID = player.GetMultiplayerAuthority();
 
+		if(gm.IsEliminated(winnerID))
+			return;
+
 		gm.ServerEndRace(winnerID, zielX);
 	}
 }

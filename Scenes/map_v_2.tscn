@@ -342,8 +342,10 @@ position = Vector2(-690, -17)
 position = Vector2(-668, -17)
 
 [node name="DeathZone" type="Area2D" parent="."]
+visible = false
 position = Vector2(123, 99)
 script = ExtResource("2_eghpy")
+GameManagerPath = NodePath("..")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DeathZone"]
 position = Vector2(701, 61.375)
@@ -396,6 +398,7 @@ shape = SubResource("RectangleShape2D_n27qp")
 position = Vector2(3776, -25)
 
 [node name="ScoreUI" type="CanvasLayer" parent="."]
+visible = false
 script = ExtResource("7_v11jc")
 PlayAgainButtonPath = NodePath("PanelContainer/MarginContainer/CenterContainer/VBoxContainer/PlayAgain")
 LeaveButtonPath = NodePath("PanelContainer/MarginContainer/CenterContainer/VBoxContainer/Leave")
