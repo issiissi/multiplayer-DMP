@@ -1,8 +1,40 @@
-[gd_scene load_steps=31 format=3 uid="uid://wrn83sjadp03"]
+[gd_scene load_steps=39 format=3 uid="uid://wrn83sjadp03"]
 
 [ext_resource type="Script" uid="uid://c1nt7guo7k40v" path="res://Scripts/Game/Player.cs" id="1_cvnsp"]
 [ext_resource type="Texture2D" uid="uid://25u8f2cmtuw8" path="res://Assets/Sprites/Spritesheets/Main Character - Male - Full spritesheet - No Guide Gespiegelt.png" id="2_aj013"]
 [ext_resource type="FontFile" uid="uid://pjakdabc2s7q" path="res://Assets/Fonts/PressStart2P-Regular.ttf" id="3_6t5aa"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aj013"]
+atlas = ExtResource("2_aj013")
+region = Rect2(352, 544, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n6mp2"]
+atlas = ExtResource("2_aj013")
+region = Rect2(320, 544, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1mqy7"]
+atlas = ExtResource("2_aj013")
+region = Rect2(288, 544, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o1y8e"]
+atlas = ExtResource("2_aj013")
+region = Rect2(256, 544, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_08so2"]
+atlas = ExtResource("2_aj013")
+region = Rect2(224, 544, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kbjk6"]
+atlas = ExtResource("2_aj013")
+region = Rect2(192, 544, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hk7uy"]
+atlas = ExtResource("2_aj013")
+region = Rect2(160, 544, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dqqwe"]
+atlas = ExtResource("2_aj013")
+region = Rect2(128, 544, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8k4j8"]
 atlas = ExtResource("2_aj013")
@@ -102,6 +134,35 @@ region = Rect2(192, 64, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_tx1dd"]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aj013")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n6mp2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1mqy7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o1y8e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_08so2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kbjk6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hk7uy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dqqwe")
+}],
+"loop": false,
+"name": &"death",
+"speed": 5.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_8k4j8")
@@ -204,7 +265,7 @@ texture_filter = 1
 position = Vector2(-1, -24)
 scale = Vector2(1.5, 1.5)
 sprite_frames = SubResource("SpriteFrames_tx1dd")
-animation = &"walk"
+animation = &"death"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0.5, -13)

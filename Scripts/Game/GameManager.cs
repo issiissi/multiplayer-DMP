@@ -80,6 +80,13 @@ public partial class GameManager : Node2D
 
 			if(p != null)
 				p.RpcId(peerID, nameof(Player.RpcClientSetEliminated), true);
+
+			int totalPlayers = GetTree().GetNodesInGroup("Players").Count;
+			if(totalPlayers < 2)
+			{
+				ServerEndSoloGameOver(peerID);
+				return;
+			}
 			
 			EndByLastPlayerStanding();
 		}
@@ -206,6 +213,22 @@ public partial class GameManager : Node2D
 			else
 				text += $"{i + 1}. {e.Name} (DistX: {e.DistX:0})\n";
 		}
+
+		Rpc(nameof(RpcApplyGameOverAndShowResults), text);
+	}
+
+	private void ServerEndSoloGameOver(long loserPeerID)
+	{
+		if(!Multiplayer.IsServer())
+			return;
+		if(game_Over)
+			return;
+		
+		game_Over = true;
+
+		string name = (Lobby.Instance != null && Lobby.Instance._players.ContainsKey(loserPeerID)) ? Lobby.Instance._players[loserPeerID]["Name"] : loserPeerID.ToString();
+		string text = "🏁 Ergebnis\n";
+		text += $"1. {name} ☠️ (Game Over)\n";
 
 		Rpc(nameof(RpcApplyGameOverAndShowResults), text);
 	}

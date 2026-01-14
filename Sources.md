@@ -8,7 +8,9 @@
 ## Sprites und Tiles fürs Game
 ### Sprites
 - [Playable Male Cyberpunk Char](https://chroma-dave.itch.io/neon-city-pixel-art-pack-main-character-1)
+- [Playable Knight Char]()
 - [Playable Cat Char](https://jumpbutton.itch.io/cat-player-asset?download)
+- [Hearts](https://o-lobster.itch.io/platformmetroidvania-pixel-art-asset-pack)
 
 ### Tiles
 - [Tilemap für Jump`n Run](https://rottingpixels.itch.io/nature-platformer-tileset)

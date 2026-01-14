@@ -152,7 +152,7 @@ public partial class Player : CharacterBody2D
 		if(eliminated)
 		{
 			Velocity = Vector2.Zero;
-			anim_sprite.Play("idle");
+			anim_sprite.Play("death");
 		}
 	}
 
