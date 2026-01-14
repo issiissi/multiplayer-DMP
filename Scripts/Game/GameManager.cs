@@ -64,16 +64,20 @@ public partial class GameManager : Node2D
 		
 		fallCount[peerID]++;
 
-		int remaining = MaxFalls - fallCount[peerID];
+		int maxLifes = MaxFalls;
+		var p = FindPlayerByPeerId(peerID);
+		if(p != null)
+			maxLifes = Mathf.Max(1, p.MaxLifes);
+		
+		int remaining = maxLifes - fallCount[peerID];
 
-		RpcId(peerID, nameof(RpcLivesChangedLocal), remaining);
+		RpcId(peerID, nameof(RpcLifesChangedLocal), remaining, maxLifes);
 
 		if(remaining <= 0)
 		{
 			eliminatedPlayers.Add(peerID);
 			eliminatedOrder.Add(peerID);
 
-			var p = FindPlayerByPeerId(peerID);
 			if(p != null)
 				p.RpcId(peerID, nameof(Player.RpcClientSetEliminated), true);
 			
@@ -81,7 +85,6 @@ public partial class GameManager : Node2D
 		}
 		else
 		{
-			var p = FindPlayerByPeerId(peerID);
 			if(p != null)
 				p.RpcId(peerID, nameof(Player.RpcClientRespawn));
 			else
@@ -102,10 +105,11 @@ public partial class GameManager : Node2D
 	}
 
 	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	private void RpcLivesChangedLocal(int remaining)
+	private void RpcLifesChangedLocal(int remaining, int maxLifes)
 	{
-		GD.Print($"[Lives] remaining={remaining} (local={Multiplayer.GetUniqueId()})");
-		GetTree().CallGroup("LifePoints", "OnLivesChanged", remaining);
+		GD.Print($"[Lifes] remaining={remaining} (local={Multiplayer.GetUniqueId()})");
+		GetTree().CallGroup("LifePoints", "SetMaxLifes", maxLifes);
+		GetTree().CallGroup("LifePoints", "OnLifesChanged", remaining);
 	}
 
 	private void EndByLastPlayerStanding()
@@ -225,7 +229,7 @@ public partial class GameManager : Node2D
 		eliminatedPlayers.Clear();
 		eliminatedOrder.Clear();
 		lastFallMsec.Clear();
-		GetTree().CallGroup("LifePoints", "ResetLives", 3);
+		GetTree().CallGroup("LifePoints", "ResetLifes", 3);
 
 		resultsUI.HideResults();
 	}

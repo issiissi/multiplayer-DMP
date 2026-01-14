@@ -1,4 +1,5 @@
 using Godot;
+using Godot.NativeInterop;
 using System;
 using System.Collections.Generic;
 
@@ -14,12 +15,12 @@ public partial class LifePoints : CanvasLayer
 	private List<TextureRect> icons = new();
 	private List<AnimatedSprite2D> fxSprites = new();
 
-	private int currentLives = -1;
-	private int pendingLives = -1;
+	private int currentLifes = -1;
+	private int pendingLifes = -1;
 
 	public override void _Ready()
 	{
-		AddToGroup("LivePoints");
+		AddToGroup("LifePoints");
 
 		heartsBox = GetNode<HBoxContainer>(HeartsContainerPath);
 
@@ -39,63 +40,82 @@ public partial class LifePoints : CanvasLayer
 			fxSprites.Add(lossFX);
 
 			lossFX.Visible = false;
+			lossFX.Stop();
+			lossFX.Frame = 0;
 
 			int index = i;
 			lossFX.AnimationFinished += () => OnLossFXFinished(index);
-
 			i++;
 		}
 
-		ResetLives(icons.Count);
+		ResetLifes(3);
 	}
 
-	public void ResetLives(int lives)
+	public void ResetLifes(int remaining)
 	{
-		currentLives = Mathf.Clamp(lives, 0, icons.Count);
-		pendingLives = -1;
-		ApplyIcons(currentLives);
+		remaining = Mathf.Clamp(remaining, 0, icons.Count);
+		currentLifes = remaining;
+		pendingLifes = -1;
+
+		ApplyIcons(currentLifes);
 
 		for(int i = 0; i < fxSprites.Count; i++)
+		{
+			fxSprites[i].Stop();
+			fxSprites[i].Frame = 0;
 			fxSprites[i].Visible = false;
+		}	
 	}
 
-	public void OnLivesChanged(int remaining)
+	public void OnLifesChanged(int remaining)
 	{
 		remaining = Mathf.Clamp(remaining, 0, icons.Count);
 
-		if(currentLives < 0 || remaining >= currentLives)
+		if(remaining == currentLifes || remaining == pendingLifes)
+			return;
+
+		if(remaining < 0 || remaining > currentLifes)
 		{
-			currentLives = remaining;
-			ApplyIcons(currentLives);
+			currentLifes = remaining;
+			ApplyIcons(currentLifes);
 			return;
 		}
 
-		int index = Mathf.Clamp(remaining, 0, icons.Count -1);
+		int prevlifes = currentLifes;
+		pendingLifes = remaining;
 
-		pendingLives = remaining;
+		int index = Mathf.Clamp(icons.Count - prevlifes, 0, icons.Count - 1);
 
 		var lossFX = fxSprites[index];
-		lossFX.Visible = true;
+		lossFX.Stop();
 		lossFX.Frame = 0;
+		lossFX.Visible = true;
 		lossFX.Play(LifeLostAnimName);
 	}
 
 	private void OnLossFXFinished(int index)
 	{
 		if(index >= 0 && index < fxSprites.Count)
-			fxSprites[index].Visible = false;
-		
-		if(pendingLives >= 0)
 		{
-			currentLives = pendingLives;
-			pendingLives = -1;
-			ApplyIcons(currentLives);
+			fxSprites[index].Stop();
+			fxSprites[index].Frame = 0;
+			fxSprites[index].Visible = false;
+		}
+		
+		if(pendingLifes >= 0)
+		{
+			currentLifes = pendingLifes;
+			pendingLifes = -1;
+			ApplyIcons(currentLifes);
 		}
 	}
 
-	private void ApplyIcons(int lives)
+	private void ApplyIcons(int lifes)
 	{
 		for(int i = 0; i < icons.Count; i++)
-			icons[i].Texture = (i < lives) ? HeartFull : HeartEmpty;
+		{
+			bool isFull = i >= icons.Count - lifes;
+			icons[i].Texture = isFull ? HeartFull : HeartEmpty;
+		}
 	}
 }

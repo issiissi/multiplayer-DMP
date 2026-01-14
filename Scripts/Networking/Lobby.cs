@@ -155,6 +155,8 @@ public partial class Lobby : Node
     */
     public void RemoveMultiplayerPeer()
     {
+        HideLifePointsUI();
+
         // Close server if this instance is the server
         if (Multiplayer.IsServer())
         {
@@ -232,6 +234,8 @@ public partial class Lobby : Node
     */
     private void OnPlayerDisconnected(long id)
     {
+        HideLifePointsUI();
+
         _players.Remove(id);
 
         EmitSignal(SignalName.PlayerDisconnected, id);
@@ -261,6 +265,8 @@ public partial class Lobby : Node
 
     private void OnConnectionFail()
     {
+        HideLifePointsUI();
+
         int myID = (Multiplayer.MultiplayerPeer != null) ? Multiplayer.GetUniqueId() : 1;
         GD.Print($"Client: {myID}\t OnConnectionFail");
 
@@ -301,6 +307,8 @@ public partial class Lobby : Node
 
     public void ReturnToLobby()
     {
+        HideLifePointsUI();
+
         GD.Print("[Lobby] ReturnToLobby RPC received");
 
         if(lifePointsUI != null && GodotObject.IsInstanceValid(lifePointsUI))
@@ -594,6 +602,8 @@ public partial class Lobby : Node
 
     public void ClearGameWorldLocal()
     {
+        HideLifePointsUI();
+
         if(mapContainer != null)
         {
             foreach(Node child in mapContainer.GetChildren())
@@ -641,6 +651,14 @@ public partial class Lobby : Node
         lifePointsUI = LifePointsScene.Instantiate<LifePoints>();
 
         AddChild(lifePointsUI);
+
+        lifePointsUI.Visible = false;
+    }
+
+    private void HideLifePointsUI()
+    {
+        if(lifePointsUI != null && GodotObject.IsInstanceValid(lifePointsUI))
+            lifePointsUI.Visible = false;
     }
 
 }

@@ -3,8 +3,8 @@ using System;
 
 public partial class Player : CharacterBody2D
 {
-	public const float Speed = 300.0f;
-	public const float JumpVelocity = -400.0f;
+	[Export] public float MoveSpeed = 300.0f;
+	[Export] public float JumpVelocity = -400.0f;
 
 	private AnimatedSprite2D anim_sprite;
 	private Label nameLabel;
@@ -28,6 +28,11 @@ public partial class Player : CharacterBody2D
 
 	private Vector2 spawn_Point;
 	private bool has_Spawn_Point = false;
+
+	// Traits
+	[Export] public int MaxLifes = 3;
+	[Export] public int ExtraJumps = 0;
+	private int jumpsLeft = 0;
 
 	public override void _Ready()
 	{
@@ -83,6 +88,13 @@ public partial class Player : CharacterBody2D
 				cam.QueueFree(); // Remove it safely
 			}
 		}
+		else
+			CallDeferred(nameof(InitLifesUI));
+	}
+
+	private void InitLifesUI()
+	{
+		GetTree().CallGroup("LifePoints", "ResetLifes", MaxLifes);
 	}
 
 	private void TrySetName(long id)
@@ -186,6 +198,8 @@ public partial class Player : CharacterBody2D
 		SetRespawnPoint(spawn_Point, silent: true);
 
 		anim_sprite.Play("idle");
+
+		InitLifesUI();
 	}
 	public override void _PhysicsProcess(double delta)
 	{
@@ -195,6 +209,9 @@ public partial class Player : CharacterBody2D
 			return;
 		if(eliminated)
 			return;
+
+		if(IsOnFloor() && !onLadder)
+			jumpsLeft = ExtraJumps;
 		
 		Vector2 velocity = Velocity;
 		Vector2 direction = Input.GetVector("move_left", "move_right", "move_up", "move_down");
@@ -222,22 +239,38 @@ public partial class Player : CharacterBody2D
 			}
 
 			// Handle Jump.
-			if (Input.IsActionJustPressed("jump") && IsOnFloor())
+			if (Input.IsActionJustPressed("jump"))
 			{
-				velocity.Y = JumpVelocity;
-				anim_sprite.Play("jump");
+				if(onLadder)
+				{
+					onLadder = false;
+					Velocity = new Vector2(Velocity.X, JumpVelocity);
+					jumpsLeft = ExtraJumps;
+					anim_sprite.Play("Jump");
+				}
+				else if(IsOnFloor())
+				{
+					velocity.Y = JumpVelocity;
+					anim_sprite.Play("jump");
+				}
+				else if(jumpsLeft > 0)
+				{
+					jumpsLeft--;
+					velocity.Y = JumpVelocity;
+					anim_sprite.Play("jump");
+				}
 			}
 		}
 
 		if (direction != Vector2.Zero)
 		{
-			velocity.X = direction.X * Speed;
+			velocity.X = direction.X * MoveSpeed;
 			anim_sprite.FlipH = direction.X < 0;
 
 		}
 		else
 		{
-			velocity.X = Mathf.MoveToward(Velocity.X, 0, Speed);
+			velocity.X = Mathf.MoveToward(Velocity.X, 0, MoveSpeed);
 		}
 		if (!IsOnFloor())
 		{

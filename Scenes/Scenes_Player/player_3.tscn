@@ -80,6 +80,7 @@ size = Vector2(14, 20)
 
 [node name="Player3" type="CharacterBody2D" groups=["Players"]]
 script = ExtResource("1_hg6pa")
+ExtraJumps = 5
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -11)

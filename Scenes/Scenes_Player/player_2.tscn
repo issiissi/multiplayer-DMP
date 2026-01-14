@@ -150,6 +150,7 @@ size = Vector2(15, 25)
 
 [node name="Player2" type="CharacterBody2D" groups=["Players"]]
 script = ExtResource("1_tepif")
+MaxLifes = 5
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
