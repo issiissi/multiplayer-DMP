@@ -34,6 +34,12 @@ public partial class UIManager : Node
 
     //Dictionary with Images for Character
     private Dictionary<int, Texture2D> characterImages = new Dictionary<int, Texture2D>();
+    private string[] characterInfo =
+    {
+        "Can run faster",
+        "Has extra healthpoints",
+        "Can doublejump"
+    };
     private int currentCharacterIndex = 0;
 
     public override void _Ready()
@@ -53,6 +59,10 @@ public partial class UIManager : Node
         Lobby.Instance.ClientChangedCharacter += ClientUpdateCharacter;
         Lobby.Instance.GameLoaded += HideAllUI;
         Lobby.Instance.ServerDisconnected += OnServerDisconnectedUI;
+
+        //Character Info Events
+        bigCharacterPreview.MouseEntered += OnCharacterPreviewMouseEntered;
+        bigCharacterPreview.MouseExited += OnCharacterPreviewMouseExited;
     }
 
     /*************************************************************************
@@ -122,7 +132,7 @@ public partial class UIManager : Node
         if (error != Error.Ok)
         {
             GD.Print("Joining Server Failed");
-            lobbyMenu.Hide();
+            return;
         }
         GD.Print("Joined Server");
         ShowLobbyMenuClient();
@@ -387,7 +397,7 @@ public partial class UIManager : Node
 
     public void ShowLobbyMenuAfterGame()
     {
-        if(Multiplayer.IsServer())
+        if (Multiplayer.IsServer())
             ShowLobbyMenuHost();
         else
             ShowLobbyMenuClient();
@@ -433,10 +443,31 @@ public partial class UIManager : Node
         return null;
     }
 
+
+    private void OnCharacterPreviewMouseEntered()
+    {
+        bigCharacterPreview.TooltipText = characterInfo[currentCharacterIndex];
+    }
+
+    private void OnCharacterPreviewMouseExited()
+    {
+        // Optional: clear it
+        bigCharacterPreview.TooltipText = "";
+    }
+
+
     private void OnServerDisconnectedUI()
     {
         Lobby.Instance.ClearGameWorldLocal();
         LeaveLobby();
+    }
+
+
+
+    //Quit Game
+    public void ExitGame()
+    {
+        GetTree().Quit();
     }
 }
 

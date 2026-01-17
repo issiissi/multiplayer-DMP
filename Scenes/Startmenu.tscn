@@ -138,7 +138,6 @@ offset_bottom = 633.0
 script = ExtResource("2_2tj4u")
 
 [node name="Start Menu" type="CanvasLayer" parent="Lobby"]
-visible = false
 
 [node name="Name Input" type="LineEdit" parent="Lobby/Start Menu"]
 offset_left = 342.0
@@ -175,6 +174,20 @@ offset_bottom = -7.0
 grow_horizontal = 2
 grow_vertical = 2
 text = "JOIN"
+
+[node name="Exit" type="Button" parent="Lobby/Start Menu"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -162.0
+offset_top = -7.0
+offset_right = 163.0
+offset_bottom = 69.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Exit"
 
 [node name="UI Manager" type="Node" parent="Lobby" node_paths=PackedStringArray("lobbyMenu", "hostMenu", "startMenu", "joinMenu", "startButton", "playerInfoContainer", "bigCharacterPreview")]
 script = ExtResource("1_m82sy")
@@ -239,5 +252,6 @@ text = "BACK
 [connection signal="pressed" from="Lobby/Lobby Menu/Rechts" to="Lobby/UI Manager" method="NextsCharacter"]
 [connection signal="pressed" from="Lobby/Start Menu/Host Game" to="Lobby/UI Manager" method="StartHostingServer"]
 [connection signal="pressed" from="Lobby/Start Menu/Join Game" to="Lobby/UI Manager" method="ShowJoinMenu"]
+[connection signal="pressed" from="Lobby/Start Menu/Exit" to="Lobby/UI Manager" method="ExitGame"]
 [connection signal="pressed" from="Lobby/Join Menu/Join Lobby" to="Lobby/UI Manager" method="JoinServer"]
 [connection signal="pressed" from="Lobby/Join Menu/Back" to="Lobby/UI Manager" method="LeaveLobby"]
