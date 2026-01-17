@@ -1,0 +1,153 @@
+[gd_scene load_steps=11 format=3 uid="uid://bgmnhitiql31a"]
+
+[ext_resource type="Script" uid="uid://d105cmwlq385n" path="res://Scripts/Game/LifePoints.cs" id="1_skxb7"]
+[ext_resource type="Texture2D" uid="uid://c07cgjktba0cj" path="res://Assets/Hearts/hearts_hud.png" id="2_s7vhh"]
+[ext_resource type="Texture2D" uid="uid://cbvpwdygjw0nr" path="res://Assets/Hearts/lost_hearts_anim_strip.png" id="3_qdydd"]
+[ext_resource type="Texture2D" uid="uid://bxia4ajk6uj4g" path="res://Assets/Hearts/no_hearts_hud.png" id="3_s7vhh"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jghdp"]
+atlas = ExtResource("3_qdydd")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7ok4c"]
+atlas = ExtResource("3_qdydd")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w3eqr"]
+atlas = ExtResource("3_qdydd")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5utt4"]
+atlas = ExtResource("3_qdydd")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qxurt"]
+atlas = ExtResource("3_qdydd")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jn0ao"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jghdp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7ok4c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w3eqr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5utt4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qxurt")
+}],
+"loop": false,
+"name": &"death",
+"speed": 5.0
+}]
+
+[node name="LifePoints" type="CanvasLayer" groups=["LifePoints"]]
+script = ExtResource("1_skxb7")
+HeartFull = ExtResource("2_s7vhh")
+HeartEmpty = ExtResource("3_s7vhh")
+
+[node name="Hearts" type="HBoxContainer" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -184.0
+offset_top = -1.0
+offset_bottom = 39.0
+grow_horizontal = 0
+
+[node name="Heart_5" type="Control" parent="Hearts"]
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Hearts/Heart_5"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 2.0
+offset_right = 36.0
+offset_bottom = 34.0
+texture = ExtResource("2_s7vhh")
+
+[node name="LossFX" type="AnimatedSprite2D" parent="Hearts/Heart_5"]
+visible = false
+position = Vector2(20, 18)
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_jn0ao")
+animation = &"death"
+
+[node name="Heart_4" type="Control" parent="Hearts"]
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Hearts/Heart_4"]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 2.0
+offset_right = 68.0
+offset_bottom = 34.0
+texture = ExtResource("2_s7vhh")
+
+[node name="LossFX" type="AnimatedSprite2D" parent="Hearts/Heart_4"]
+visible = false
+position = Vector2(52, 18)
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_jn0ao")
+animation = &"death"
+
+[node name="Heart_3" type="Control" parent="Hearts"]
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Hearts/Heart_3"]
+layout_mode = 0
+offset_left = 68.0
+offset_top = 2.0
+offset_right = 100.0
+offset_bottom = 34.0
+texture = ExtResource("2_s7vhh")
+
+[node name="LossFX" type="AnimatedSprite2D" parent="Hearts/Heart_3"]
+visible = false
+position = Vector2(84, 18)
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_jn0ao")
+animation = &"death"
+
+[node name="Heart_2" type="Control" parent="Hearts"]
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Hearts/Heart_2"]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 2.0
+offset_right = 132.0
+offset_bottom = 34.0
+texture = ExtResource("2_s7vhh")
+
+[node name="LossFX" type="AnimatedSprite2D" parent="Hearts/Heart_2"]
+visible = false
+position = Vector2(116, 18)
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_jn0ao")
+animation = &"death"
+
+[node name="Heart_1" type="Control" parent="Hearts"]
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Hearts/Heart_1"]
+layout_mode = 0
+offset_left = 132.0
+offset_top = 2.0
+offset_right = 164.0
+offset_bottom = 34.0
+texture = ExtResource("2_s7vhh")
+
+[node name="LossFX" type="AnimatedSprite2D" parent="Hearts/Heart_1"]
+visible = false
+position = Vector2(148, 18)
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_jn0ao")
+animation = &"death"

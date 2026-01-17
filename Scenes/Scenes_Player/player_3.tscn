@@ -1,0 +1,150 @@
+[gd_scene load_steps=22 format=3 uid="uid://dnruo8qvmrs8"]
+
+[ext_resource type="Script" uid="uid://c1nt7guo7k40v" path="res://Scripts/Game/Player.cs" id="1_hg6pa"]
+[ext_resource type="Texture2D" uid="uid://7b8oqp80bfm" path="res://Assets/Sprites/Cat_sheets/Cat_idle_1.png" id="2_a02up"]
+[ext_resource type="Texture2D" uid="uid://c6o5333awe5sd" path="res://Assets/Sprites/Cat_sheets/Cat_dead_1.png" id="2_lh6fv"]
+[ext_resource type="Texture2D" uid="uid://dmam443kgwfx6" path="res://Assets/Sprites/Cat_sheets/Cat_jump_1.png" id="3_lh6fv"]
+[ext_resource type="Texture2D" uid="uid://fdkel6xwjrki" path="res://Assets/Sprites/Cat_sheets/Cat_jump_2.png" id="4_u6qf5"]
+[ext_resource type="Texture2D" uid="uid://cba31a5kuxmxr" path="res://Assets/Sprites/Cat_sheets/Cat_walk_1.png" id="5_ks6h0"]
+[ext_resource type="FontFile" uid="uid://pjakdabc2s7q" path="res://Assets/Fonts/PressStart2P-Regular.ttf" id="6_expaw"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u6qf5"]
+atlas = ExtResource("2_lh6fv")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ks6h0"]
+atlas = ExtResource("2_lh6fv")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_expaw"]
+atlas = ExtResource("2_lh6fv")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ctjn6"]
+atlas = ExtResource("2_lh6fv")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x1eap"]
+atlas = ExtResource("2_lh6fv")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_06ce1"]
+atlas = ExtResource("2_a02up")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q8s5y"]
+atlas = ExtResource("2_a02up")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3b35j"]
+atlas = ExtResource("2_a02up")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tjtty"]
+atlas = ExtResource("5_ks6h0")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_htltj"]
+atlas = ExtResource("5_ks6h0")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_efv3f"]
+atlas = ExtResource("5_ks6h0")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jb5ob"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u6qf5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ks6h0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_expaw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ctjn6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x1eap")
+}],
+"loop": false,
+"name": &"death",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_06ce1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q8s5y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3b35j")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_lh6fv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_u6qf5")
+}],
+"loop": true,
+"name": &"jump",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tjtty")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_htltj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_efv3f")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cwvn5"]
+size = Vector2(14, 20)
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_hg6pa"]
+
+[node name="Player3" type="CharacterBody2D" groups=["Players"]]
+script = ExtResource("1_hg6pa")
+ExtraJumps = 5
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -11)
+scale = Vector2(0.625, 0.65625)
+sprite_frames = SubResource("SpriteFrames_jb5ob")
+animation = &"death"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -10)
+shape = SubResource("RectangleShape2D_cwvn5")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(2, 2)
+
+[node name="Name_InGame" type="Label" parent="."]
+offset_left = -20.0
+offset_top = -28.0
+offset_right = 28.0
+offset_bottom = -20.0
+theme_override_fonts/font = ExtResource("6_expaw")
+theme_override_font_sizes/font_size = 8
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_hg6pa")
