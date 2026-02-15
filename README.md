@@ -41,7 +41,7 @@ This project is a multiplayer platformer game created as part of a university as
 - [Structure of a Matchmaking-Lobby in Godot 4](https://www.youtube.com/playlist?list=PLOtt3_R1rR9WrcyDRsRF3oSrzffmBtJbu)
 - [Basics](https://www.youtube.com/watch?v=MOJVjFngOs4)
 - [Usage of TileSets](https://docs.godotengine.org/en/stable/tutorials/2d/using_tilesets.html)
-- [Checkpoints & Respawns in Godot 4](https://www.youtube.com/watch?v=DfXPWmoHiLs)
+- [Checkpoints & Respawns in Godot 4](https://www.youtube.com/watch?v=DfX[PWmoHiLs)
 ## Contributers
 - [@issiissi](https://github.com/issiissi)
 - [@Thano19](https://github.com/Thano19)
