@@ -1,4 +1,4 @@
-# Multiplayer
+# Multiplayer Game: One way or another
 This project is a multiplayer platformer game created as part of a university assignment. Players can move, jump, and interact within a shared game environment in real time. It demonstrates basic multiplayer mechanics, platformer physics, and networking concepts.
 
 ## Features
