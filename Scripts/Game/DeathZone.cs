@@ -18,6 +18,7 @@ public partial class DeathZone : Area2D
 		BodyEntered += on_body_entered;
 	}
 
+// Beim Betreten der DeathZone wird der Fall an den GameManager gemeldet, damit er entsprechend reagieren kann (z.B. Spieler zurücksetzen)
 	public void on_body_entered(Node2D body)
 	{
 		var player = body as Player ?? body.GetParentOrNull<Player>();

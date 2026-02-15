@@ -32,6 +32,8 @@ public partial class GameManager : Node2D
 		resultsUI = GetNode<ScoreUi>(ResultsUIPath);
 	}
 
+
+// Public API (von außen aufgerufene Methoden)
 	[Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
 	public void ClientReportFall(long claimedPeerID)
 	{
@@ -99,67 +101,6 @@ public partial class GameManager : Node2D
 		}
 	}
 
-	public bool IsEliminated(long peerID) => eliminatedPlayers.Contains(peerID);
-
-	private Player FindPlayerByPeerId(long peerID)
-	{
-		foreach(Node n in GetTree().GetNodesInGroup("Players"))
-		{
-			if(n is Player p && p.GetMultiplayerAuthority() == peerID)
-				return p;
-		}
-		return null;
-	}
-
-	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	private void RpcLifesChangedLocal(int remaining, int maxLifes)
-	{
-		GD.Print($"[Lifes] remaining={remaining} (local={Multiplayer.GetUniqueId()})");
-		GetTree().CallGroup("LifePoints", "SetMaxLifes", maxLifes);
-		GetTree().CallGroup("LifePoints", "OnLifesChanged", remaining);
-	}
-
-	private void EndByLastPlayerStanding()
-	{
-		if(!Multiplayer.IsServer())
-			return;
-		if(game_Over)
-			return;
-		
-		var allPlayers = GetTree().GetNodesInGroup("Players");
-		if(allPlayers.Count < 2)
-			return;
-		
-		Player lastPlayer = null;
-		int aliveCount = 0;
-
-		foreach(Node n in allPlayers)
-		{
-			if(n is not Player p)
-				continue;
-			long peerID = p.GetMultiplayerAuthority();
-
-			if(IsEliminated(peerID))
-				continue;
-
-			aliveCount++;
-			lastPlayer = p;
-			
-			if(aliveCount > 1)
-				return;
-		}
-
-		if(aliveCount == 1 && lastPlayer != null)
-		{
-			long winnerID = lastPlayer.GetMultiplayerAuthority();
-
-			float peudoGoalX = lastPlayer.GlobalPosition.X;
-
-			ServerEndRace(winnerID, peudoGoalX, "Last Alive");
-			GD.Print($"[GameManager] Auto-finish: last alive winner={winnerID}");
-		}
-	}
-
 	public void ServerEndRace(long winnerPeerID, float goalx, string winReason = "Finish")
 	{
 		if (!Multiplayer.IsServer())
@@ -217,6 +158,67 @@ public partial class GameManager : Node2D
 		Rpc(nameof(RpcApplyGameOverAndShowResults), text);
 	}
 
+	public void PlayAgainRoundLocal()
+	{
+		GD.Print($"[GameManager] PlayAgainRoundLocal CALLED (server={Multiplayer.IsServer()}) -> game_Over=false");
+
+		GD.Print($"[GameManager] PlayAgainRoundLocal called (server={Multiplayer.IsServer()}) -> resetting game_Over");
+		game_Over = false;
+
+		fallCount.Clear();
+		eliminatedPlayers.Clear();
+		eliminatedOrder.Clear();
+		lastFallMsec.Clear();
+		GetTree().CallGroup("LifePoints", "ResetLifes", 3);
+
+		resultsUI.HideResults();
+	}
+
+	public bool IsEliminated(long peerID) => eliminatedPlayers.Contains(peerID);
+
+
+// Server-Only Methoden
+	private void EndByLastPlayerStanding()
+	{
+		if(!Multiplayer.IsServer())
+			return;
+		if(game_Over)
+			return;
+		
+		var allPlayers = GetTree().GetNodesInGroup("Players");
+		if(allPlayers.Count < 2)
+			return;
+		
+		Player lastPlayer = null;
+		int aliveCount = 0;
+
+		foreach(Node n in allPlayers)
+		{
+			if(n is not Player p)
+				continue;
+			long peerID = p.GetMultiplayerAuthority();
+
+			if(IsEliminated(peerID))
+				continue;
+
+			aliveCount++;
+			lastPlayer = p;
+			
+			if(aliveCount > 1)
+				return;
+		}
+
+		if(aliveCount == 1 && lastPlayer != null)
+		{
+			long winnerID = lastPlayer.GetMultiplayerAuthority();
+
+			float peudoGoalX = lastPlayer.GlobalPosition.X;
+
+			ServerEndRace(winnerID, peudoGoalX, "Last Alive");
+			GD.Print($"[GameManager] Auto-finish: last alive winner={winnerID}");
+		}
+	}
+
 	private void ServerEndSoloGameOver(long loserPeerID)
 	{
 		if(!Multiplayer.IsServer())
@@ -233,6 +235,16 @@ public partial class GameManager : Node2D
 		Rpc(nameof(RpcApplyGameOverAndShowResults), text);
 	}
 
+
+// RPCs
+	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void RpcLifesChangedLocal(int remaining, int maxLifes)
+	{
+		GD.Print($"[Lifes] remaining={remaining} (local={Multiplayer.GetUniqueId()})");
+		GetTree().CallGroup("LifePoints", "SetMaxLifes", maxLifes);
+		GetTree().CallGroup("LifePoints", "OnLifesChanged", remaining);
+	}
+
 	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
 	private void RpcApplyGameOverAndShowResults(string resultsText)
 	{
@@ -241,19 +253,14 @@ public partial class GameManager : Node2D
 		resultsUI.show_Results(resultsText);
 	}
 
-	public void PlayAgainRoundLocal()
+// Helfer-Methoden
+	private Player FindPlayerByPeerId(long peerID)
 	{
-		GD.Print($"[GameManager] PlayAgainRoundLocal CALLED (server={Multiplayer.IsServer()}) -> game_Over=false");
-
-		GD.Print($"[GameManager] PlayAgainRoundLocal called (server={Multiplayer.IsServer()}) -> resetting game_Over");
-		game_Over = false;
-
-		fallCount.Clear();
-		eliminatedPlayers.Clear();
-		eliminatedOrder.Clear();
-		lastFallMsec.Clear();
-		GetTree().CallGroup("LifePoints", "ResetLifes", 3);
-
-		resultsUI.HideResults();
+		foreach(Node n in GetTree().GetNodesInGroup("Players"))
+		{
+			if(n is Player p && p.GetMultiplayerAuthority() == peerID)
+				return p;
+		}
+		return null;
 	}
 }

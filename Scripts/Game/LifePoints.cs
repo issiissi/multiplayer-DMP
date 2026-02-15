@@ -5,16 +5,20 @@ using System.Collections.Generic;
 
 public partial class LifePoints : CanvasLayer
 {
+	// Assets
 	[Export] public Texture2D HeartFull;
 	[Export] public Texture2D HeartEmpty;
 	[Export] public StringName LifeLostAnimName = "death";
 
+	// Nodes
 	[Export] public NodePath HeartsContainerPath = "Hearts";
 	private HBoxContainer heartsBox;
 
+	// Referenzen auf die UI-Elemente
 	private List<TextureRect> icons = new();
 	private List<AnimatedSprite2D> fxSprites = new();
 
+	// Zustände
 	private int currentLifes = -1;
 	private int pendingLifes = -1;
 
@@ -51,6 +55,7 @@ public partial class LifePoints : CanvasLayer
 		ResetLifes(3);
 	}
 
+	// Anzeige der Leben zu Beginn oder nach Respawn
 	public void ResetLifes(int remaining)
 	{
 		remaining = Mathf.Clamp(remaining, 0, icons.Count);
@@ -67,6 +72,7 @@ public partial class LifePoints : CanvasLayer
 		}	
 	}
 
+	// Lebensverlust
 	public void OnLifesChanged(int remaining)
 	{
 		remaining = Mathf.Clamp(remaining, 0, icons.Count);
@@ -110,6 +116,7 @@ public partial class LifePoints : CanvasLayer
 		}
 	}
 
+	// UI-Update der Herzen
 	private void ApplyIcons(int lifes)
 	{
 		for(int i = 0; i < icons.Count; i++)

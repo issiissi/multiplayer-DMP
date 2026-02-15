@@ -14,6 +14,7 @@ public partial class Checkpoint : Area2D
         
 	}
 
+// Beim Betreten des jeweiligen Checkpoints wird der aktuelle Respawnpunkt überschrieben
 	public void _on_checkpoint_body_entered(Node2D body)
 	{
 		if (body is Player player && player.IsMultiplayerAuthority())

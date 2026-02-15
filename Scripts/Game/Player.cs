@@ -3,9 +3,11 @@ using System;
 
 public partial class Player : CharacterBody2D
 {
+	// Grundwerte
 	[Export] public float MoveSpeed = 300.0f;
 	[Export] public float JumpVelocity = -400.0f;
 
+	// Nodes
 	private AnimatedSprite2D anim_sprite;
 	private Label nameLabel;
 
@@ -26,6 +28,7 @@ public partial class Player : CharacterBody2D
 	//  Game Over
 	private bool game_Over = false;
 
+	// Spawn Point
 	private Vector2 spawn_Point;
 	private bool has_Spawn_Point = false;
 
@@ -72,135 +75,6 @@ public partial class Player : CharacterBody2D
 			SetRespawnPoint(GlobalPosition, silent: true);
 	}
 
-	public void Initialize()
-	{
-		long id = GetMultiplayerAuthority();
-		GD.Print($"[Player] has multiplayer Authority: {id}");
-		TrySetName(id);
-		SetProcessInput(IsMultiplayerAuthority());
-
-		if (!IsMultiplayerAuthority())
-		{
-			//Remove the camera 
-			Camera2D cam = GetNodeOrNull<Camera2D>("Camera2D");
-			if (cam != null)
-			{
-				cam.QueueFree(); // Remove it safely
-			}
-		}
-		else
-			CallDeferred(nameof(InitLifesUI));
-	}
-
-	private void InitLifesUI()
-	{
-		GetTree().CallGroup("LifePoints", "ResetLifes", MaxLifes);
-	}
-
-	private void TrySetName(long id)
-	{
-		string name = Lobby.Instance._players[id]["Name"];
-		nameLabel.Text = name;
-	}
-
-	public void SetRespawnPoint(Vector2 worldPos, bool silent = false)
-	{
-		respawn_Point = worldPos;
-		has_respawn_Point = true;
-
-		if(!silent)
-			GD.Print($"[Checkpoint] Respawnpoint saved 💾 -> {respawn_Point}");
-	}
-
-	public void Respawn()
-	{
-		if(!has_respawn_Point)
-			SetRespawnPoint(GlobalPosition, silent: true);
-		
-		Rpc(nameof(RpcApplyRespawn), respawn_Point);
-	}
-
-	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	private void RpcApplyRespawn(Vector2 worldPos)
-	{
-		Velocity = Vector2.Zero;
-		GlobalPosition = worldPos;
-
-		if(anim_sprite != null)
-			anim_sprite.Play("idle");
-	}
-
-	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	public void RpcClientRespawn()
-	{
-		if(!Multiplayer.IsServer() && Multiplayer.GetRemoteSenderId() != 1)
-			return;
-		if(!IsMultiplayerAuthority())
-			return;
-		
-		Respawn();
-	}
-
-	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-	public void RpcClientSetEliminated(bool value)
-	{
-		if(!Multiplayer.IsServer() && Multiplayer.GetRemoteSenderId() != 1)
-			return;
-		
-		eliminated = value;
-
-		if(eliminated)
-		{
-			Velocity = Vector2.Zero;
-			anim_sprite.Play("death");
-		}
-	}
-
-	public void SetOnLadder(bool on)
-	{
-		onLadder = on;
-		GD.Print($"[Player] onLadder = {onLadder}");
-
-		if (on)
-			Velocity = new Vector2(Velocity.X, 0);
-	}
-
-	public void SetGameOver(bool over)
-	{
-		game_Over = over;
-		if(over)
-		{
-			Velocity = Vector2.Zero;
-			anim_sprite?.Play("idle");
-		}
-	}
-
-	public void PlayAgainNewRound()
-	{
-		eliminated = false;
-		game_Over = false;
-		onLadder = false;
-
-		if(!IsMultiplayerAuthority())
-			return;
-		SetGameOver(false);
-
-		onLadder = false;
-		Velocity = Vector2.Zero;
-
-		if(!has_Spawn_Point)
-		{
-			spawn_Point = GlobalPosition;
-			has_Spawn_Point = true;
-		}
-
-		GlobalPosition = spawn_Point;
-		SetRespawnPoint(spawn_Point, silent: true);
-
-		anim_sprite.Play("idle");
-
-		InitLifesUI();
-	}
 	public override void _PhysicsProcess(double delta)
 	{
 		if (!IsMultiplayerAuthority())
@@ -287,5 +161,141 @@ public partial class Player : CharacterBody2D
 
 		Velocity = velocity;
 		MoveAndSlide();
+	}
+
+
+	// Initiialisierung/Setup
+	public void Initialize()
+	{
+		long id = GetMultiplayerAuthority();
+		GD.Print($"[Player] has multiplayer Authority: {id}");
+		TrySetName(id);
+		SetProcessInput(IsMultiplayerAuthority());
+
+		if (!IsMultiplayerAuthority())
+		{
+			//Remove the camera 
+			Camera2D cam = GetNodeOrNull<Camera2D>("Camera2D");
+			if (cam != null)
+			{
+				cam.QueueFree(); // Remove it safely
+			}
+		}
+		else
+			CallDeferred(nameof(InitLifesUI));
+	}
+
+	private void InitLifesUI()
+	{
+		GetTree().CallGroup("LifePoints", "ResetLifes", MaxLifes);
+	}
+
+	private void TrySetName(long id)
+	{
+		string name = Lobby.Instance._players[id]["Name"];
+		nameLabel.Text = name;
+	}
+
+
+	// Gameplay Mechanics
+	public void SetRespawnPoint(Vector2 worldPos, bool silent = false)
+	{
+		respawn_Point = worldPos;
+		has_respawn_Point = true;
+
+		if(!silent)
+			GD.Print($"[Checkpoint] Respawnpoint saved 💾 -> {respawn_Point}");
+	}
+
+	public void Respawn()
+	{
+		if(!has_respawn_Point)
+			SetRespawnPoint(GlobalPosition, silent: true);
+		
+		Rpc(nameof(RpcApplyRespawn), respawn_Point);
+	}
+
+	public void SetOnLadder(bool on)
+	{
+		onLadder = on;
+		GD.Print($"[Player] onLadder = {onLadder}");
+
+		if (on)
+			Velocity = new Vector2(Velocity.X, 0);
+	}
+
+	public void SetGameOver(bool over)
+	{
+		game_Over = over;
+		if(over)
+		{
+			Velocity = Vector2.Zero;
+			anim_sprite?.Play("idle");
+		}
+	}
+
+	public void PlayAgainNewRound()
+	{
+		eliminated = false;
+		game_Over = false;
+		onLadder = false;
+
+		if(!IsMultiplayerAuthority())
+			return;
+		SetGameOver(false);
+
+		onLadder = false;
+		Velocity = Vector2.Zero;
+
+		if(!has_Spawn_Point)
+		{
+			spawn_Point = GlobalPosition;
+			has_Spawn_Point = true;
+		}
+
+		GlobalPosition = spawn_Point;
+		SetRespawnPoint(spawn_Point, silent: true);
+
+		anim_sprite.Play("idle");
+
+		InitLifesUI();
+	}
+
+
+	// RPCs
+	[Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	private void RpcApplyRespawn(Vector2 worldPos)
+	{
+		Velocity = Vector2.Zero;
+		GlobalPosition = worldPos;
+
+		if(anim_sprite != null)
+			anim_sprite.Play("idle");
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	public void RpcClientRespawn()
+	{
+		if(!Multiplayer.IsServer() && Multiplayer.GetRemoteSenderId() != 1)
+			return;
+		if(!IsMultiplayerAuthority())
+			return;
+		
+		Respawn();
+	}
+
+	[Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+	public void RpcClientSetEliminated(bool value)
+	{
+		if(!Multiplayer.IsServer() && Multiplayer.GetRemoteSenderId() != 1)
+			return;
+		
+		eliminated = value;
+
+		if(eliminated)
+		{
+			Velocity = Vector2.Zero;
+			anim_sprite.Play("death");
+		}
 	}
 }

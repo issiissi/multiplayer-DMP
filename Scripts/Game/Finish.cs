@@ -20,6 +20,7 @@ public partial class Finish : Area2D
 		BodyEntered += _on_finish_body_entered;
 	}
 
+// Beim Betreten des Finish-Bereichs wird überprüft, ob der Spieler der Server ist und ob er nicht bereits eliminiert wurde
 	public void _on_finish_body_entered(Node2D body)
 	{
 		GD.Print($"[Finish] ENTER: {body.Name} ({body.GetType().Name}) isServer={Multiplayer.IsServer()}");
